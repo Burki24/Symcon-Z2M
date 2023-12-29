@@ -1,0 +1,18 @@
+{
+    "id": "{1B372332-5651-0E7F-C74C-DE419E2EE5D2}",
+    "name": "Bridge",
+    "type": 3,
+    "vendor": "",
+    "aliases": [
+        "Z2M Bridge"
+    ],
+    "parentRequirements": [
+        "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}"
+    ],
+    "childRequirements": [],
+    "implemented": [
+        "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}"
+    ],
+    "prefix": "ZAO",
+    "url": ""
+}

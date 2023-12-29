@@ -1,0 +1,18 @@
+{
+    "id": "{05D65439-9B28-A62B-E170-19BDEEBDCDF1}",
+    "name": "Configurator",
+    "type": 3,
+    "vendor": "",
+    "aliases": [
+        "Z2M Configurator"
+    ],
+    "parentRequirements": [
+        "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}"
+    ],
+    "childRequirements": [],
+    "implemented": [
+        "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}"
+    ],
+    "prefix": "ZAO",
+    "url": ""
+}

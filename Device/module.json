@@ -1,0 +1,18 @@
+{
+    "id": "{9B07A0C7-9C54-A0BD-07DB-9FE2C27109C9}",
+    "name": "Device",
+    "type": 3,
+    "vendor": "",
+    "aliases": [
+        "Z2M Device"
+    ],
+    "parentRequirements": [
+        "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}"
+    ],
+    "childRequirements": [],
+    "implemented": [
+        "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}"
+    ],
+    "prefix": "ZAO",
+    "url": ""
+}
