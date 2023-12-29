@@ -16,7 +16,6 @@
         }
     ],
     "actions": [
-
         {
             "type": "ExpansionPanel",
             "caption": "Devices",
