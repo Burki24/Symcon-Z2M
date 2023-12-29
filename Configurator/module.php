@@ -44,7 +44,7 @@ class Zigbee2MQTTConfigurator extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $useCategories = $this->ReadPropertyBoolean('UseCategories');
 
-            // Durchsuchen des Formular-Arrays und Anpassen der Spaltenkonfiguration
+        // Durchsuchen des Formular-Arrays und Anpassen der Spaltenkonfiguration
         foreach ($Form['actions'] as &$action) {
             if (isset($action['type']) && $action['type'] == 'ExpansionPanel' && isset($action['items'])) {
                 foreach ($action['items'] as &$item) {
@@ -128,17 +128,17 @@ class Zigbee2MQTTConfigurator extends IPSModule
 
             $instanceID = $this->getDeviceInstanceID($device['friendly_name']);
 
-    if ($useCategories) {
-        // Verwende $instanceName und füge Kategorien hinzu, wenn Kategorien aktiv sind
-        $categories = array_slice($friendlyNameParts, 0, -1);
-        $this->SendDebug('Group Categories', implode(', ', $categories), 0);
-        $Value['name'] = $instanceName;
-        $Value['create'] = [
-            'moduleID'      => '{11BF3773-E940-469B-9DD7-FB9ACD7199A2}',
-            'configuration' => [
-                'MQTTTopic'    => $group['friendly_name'],
+            if ($useCategories) {
+                // Verwende $instanceName und füge Kategorien hinzu, wenn Kategorien aktiv sind
+                $categories = array_slice($friendlyNameParts, 0, -1);
+                $this->SendDebug('Group Categories', implode(', ', $categories), 0);
+                $Value['name'] = $instanceName;
+                $Value['create'] = [
+                    'moduleID'      => '{11BF3773-E940-469B-9DD7-FB9ACD7199A2}',
+                    'configuration' => [
+                        'MQTTTopic'    => $group['friendly_name'],
                     ],
-                'location' => $categories // Kategorien hinzufügen
+                    'location' => $categories // Kategorien hinzufügen
                 ];
             } else {
                 // Verwende $group['friendly_name'], wenn Kategorien nicht aktiv sind
@@ -155,7 +155,6 @@ class Zigbee2MQTTConfigurator extends IPSModule
             $Value['ID'] = $group['ID'];
             $Value['instanceID'] = $instanceID;
             $Value['categories'] = $categories;
-
 
             array_push($ValuesGroups, $Value);
         }
