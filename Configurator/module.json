@@ -1,7 +1,7 @@
 {
     "id": "{05D65439-9B28-A62B-E170-19BDEEBDCDF1}",
-    "name": "Configurator",
-    "type": 3,
+    "name": "Z2MConfigurator",
+    "type": 4,
     "vendor": "",
     "aliases": [
         "Z2M Configurator"
