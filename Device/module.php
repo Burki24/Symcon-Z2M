@@ -23,22 +23,22 @@ class Zigbee2MQTTDevice extends IPSModule
         $this->RegisterPropertyString('configuration', ''); // Stelle sicher, dass 'configuration' registriert ist
 
         // Abrufe den Wert unter dem Schlüssel "Categories" aus der Konfiguration
-    // Abrufe den Wert unter dem Schlüssel "configuration" aus den Properties
-    $configuration = $this->ReadPropertyString('configuration');
+        // Abrufe den Wert unter dem Schlüssel "configuration" aus den Properties
+        $configuration = $this->ReadPropertyString('configuration');
 
-    // Überprüfe, ob die Konfiguration eine gültige JSON-Zeichenfolge ist
-    if ($configuration) {
-        $config = json_decode($configuration, true);
-        if (is_array($config)) {
-            // Wenn die Konfiguration gültig ist, rufe die "Categories" ab und registriere sie als Property
-            $categories = isset($config['Categories']) ? $config['Categories'] : '';
-            $this->RegisterPropertyString('Categories', $categories);
-        } else {
-            // Wenn die Konfiguration ungültig ist, gib eine Fehlermeldung aus oder handle den Fehler entsprechend
-            IPS_LogMessage('Zigbee2MQTT', 'Ungültige Konfiguration: ' . $configuration);
+        // Überprüfe, ob die Konfiguration eine gültige JSON-Zeichenfolge ist
+        if ($configuration) {
+            $config = json_decode($configuration, true);
+            if (is_array($config)) {
+                // Wenn die Konfiguration gültig ist, rufe die "Categories" ab und registriere sie als Property
+                $categories = isset($config['Categories']) ? $config['Categories'] : '';
+                $this->RegisterPropertyString('Categories', $categories);
+            } else {
+                // Wenn die Konfiguration ungültig ist, gib eine Fehlermeldung aus oder handle den Fehler entsprechend
+                IPS_LogMessage('Zigbee2MQTT', 'Ungültige Konfiguration: ' . $configuration);
+            }
         }
-    }
-            // $this->createVariableProfiles();
+        // $this->createVariableProfiles();
     }
 
     public function ApplyChanges()

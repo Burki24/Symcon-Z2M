@@ -25,16 +25,16 @@ class Zigbee2MQTTGroup extends IPSModule
         // Überprüfe, ob die Konfiguration eine gültige JSON-Zeichenfolge ist
         $configuration = $this->ReadPropertyString('configuration');
         if ($configuration) {
-        $config = json_decode($configuration, true);
-        if (is_array($config)) {
-            // Wenn die Konfiguration gültig ist, rufe die "Categories" ab und registriere sie als Property
-            $categories = isset($config['Categories']) ? $config['Categories'] : '';
-            $this->RegisterPropertyString('Categories', $categories);
-        } else {
-            // Wenn die Konfiguration ungültig ist, gib eine Fehlermeldung aus oder handle den Fehler entsprechend
-            IPS_LogMessage('Zigbee2MQTT', 'Ungültige Konfiguration: ' . $configuration);
+            $config = json_decode($configuration, true);
+            if (is_array($config)) {
+                // Wenn die Konfiguration gültig ist, rufe die "Categories" ab und registriere sie als Property
+                $categories = isset($config['Categories']) ? $config['Categories'] : '';
+                $this->RegisterPropertyString('Categories', $categories);
+            } else {
+                // Wenn die Konfiguration ungültig ist, gib eine Fehlermeldung aus oder handle den Fehler entsprechend
+                IPS_LogMessage('Zigbee2MQTT', 'Ungültige Konfiguration: ' . $configuration);
+            }
         }
-    }
         // $this->createVariableProfiles();
     }
 
