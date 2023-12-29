@@ -1,0 +1,12 @@
+{
+    "id": "{8876368A-3140-7C94-212A-162878972CB6}",
+    "name": "Z2M AddOn",
+    "author": "Burkhard Kneiseler",
+    "url": "https://github.com/Burki24/Symcon-Z2M",
+    "compatibility": {
+        "version": "6.4"
+    },
+    "version": "1.0",
+    "build": 0,
+    "date": 0
+}
