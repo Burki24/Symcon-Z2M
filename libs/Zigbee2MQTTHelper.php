@@ -16,13 +16,13 @@ trait Zigbee2MQTTHelper
     public function RequestAction($Ident, $Value)
     {
         $variableID = $this->GetIDForIdent($Ident);
-        $this->SendDebug("RequestAction", "Ident: " . $Ident, 0);
+        $this->SendDebug('RequestAction', 'Ident: ' . $Ident, 0);
         $variableType = IPS_GetVariable($variableID)['VariableType'];
-        $this->SendDebug("RequestAction", "VariableType: " . $variableType, 0);
-        $this->SendDebug("RequestAction", "VariableID: " . $variableID, 0);
+        $this->SendDebug('RequestAction', 'VariableType: ' . $variableType, 0);
+        $this->SendDebug('RequestAction', 'VariableID: ' . $variableID, 0);
 
         $payloadValue = $Value; // Values unbehandelt übertragen
-        $this->SendDebug("RequestAction", "Setting property $Ident to $Value", 0);
+        $this->SendDebug('RequestAction', "Setting property $Ident to $Value", 0);
 
         // Payload erstellen
         $payload = json_encode([$Ident => $payloadValue], JSON_UNESCAPED_SLASHES);
@@ -66,6 +66,65 @@ trait Zigbee2MQTTHelper
             $this->processPayloadData($Buffer);
         }
     }
+
+    public function setColorExt($color, string $mode, array $params = [], string $Z2MMode = 'color')
+    {
+        switch ($mode) {
+            case 'cie':
+                $this->SendDebug(__FUNCTION__, $color, 0);
+                $this->SendDebug(__FUNCTION__, $mode, 0);
+                $this->SendDebug(__FUNCTION__, json_encode($params, JSON_UNESCAPED_SLASHES), 0);
+                $this->SendDebug(__FUNCTION__, $Z2MMode, 0);
+                if (preg_match('/^#[a-f0-9]{6}$/i', strval($color))) {
+                    $color = ltrim($color, '#');
+                    $color = hexdec($color);
+                }
+                $RGB = $this->HexToRGB($color);
+                $cie = $this->RGBToCIE($RGB[0], $RGB[1], $RGB[2]);
+                if ($Z2MMode = 'color') {
+                    $Payload['color'] = $cie;
+                } elseif ($Z2MMode == 'color_rgb') {
+                    $Payload['color_rgb'] = $cie;
+                } else {
+                    return;
+                }
+
+                foreach ($params as $key => $value) {
+                    $Payload[$key] = $value;
+                }
+
+                $PayloadJSON = json_encode($Payload, JSON_UNESCAPED_SLASHES);
+                $this->SendDebug(__FUNCTION__, $PayloadJSON, 0);
+                $this->Z2MSet($PayloadJSON);
+                break;
+            default:
+                $this->SendDebug('setColor', 'Invalid Mode ' . $mode, 0);
+                break;
+        }
+    }
+    public function Z2MSet(mixed $payload)
+    {
+        $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
+        $Data['PacketType'] = 3;
+        $Data['QualityOfService'] = 0;
+        $Data['Retain'] = false;
+        $Data['Topic'] = $this->ReadPropertyString('MQTTBaseTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/set';
+        $Data['Payload'] = $payload;
+        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
+        $this->SendDebug(__FUNCTION__ . ' Topic', $Data['Topic'], 0);
+        $this->SendDebug(__FUNCTION__ . ' Payload', $Data['Payload'], 0);
+        $this->SendDataToParent($DataJSON);
+    }
+
+    protected function SetValue($Ident, $Value)
+    {
+        if (@$this->GetIDForIdent($Ident)) {
+            $this->SendDebug('Info :: SetValue for ' . $Ident, 'Value: ' . $Value, 0);
+            parent::SetValue($Ident, $Value);
+        } else {
+            $this->SendDebug('Error :: No Expose for Value', 'Ident: ' . $Ident, 0);
+        }
+    }
     private function processDeviceInfoAndGroupInfo($Buffer)
     {
         $Payload = json_decode($Buffer['Payload'], true);
@@ -76,7 +135,7 @@ trait Zigbee2MQTTHelper
         } elseif (fnmatch('symcon/' . $this->ReadPropertyString('MQTTBaseTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/groupInfo', $Buffer['Topic'])) {
             if (is_array($Payload)) {
                 $this->mapExposesToVariables($Payload);
-        }
+            }
         }
     }
 
@@ -87,7 +146,7 @@ trait Zigbee2MQTTHelper
         $Payload = json_decode($Buffer['Payload'], true);
 
         if (!is_array($Payload)) {
-            $this->SendDebug(__FUNCTION__, "Payload ist kein gültiges Array", 0);
+            $this->SendDebug(__FUNCTION__, 'Payload ist kein gültiges Array', 0);
             return;
         }
 
@@ -113,7 +172,7 @@ trait Zigbee2MQTTHelper
 
             $missingExposes = $this->mapExposesToVariables($Payload['exposes']);
             if (!empty($missingExposes)) {
-                $this->SendDebug(__FUNCTION__, "Fehlende 'exposes' im Payload: " . implode(", ", $missingExposes), 0);
+                $this->SendDebug(__FUNCTION__, "Fehlende 'exposes' im Payload: " . implode(', ', $missingExposes), 0);
             }
         } else {
             $this->SendDebug(__FUNCTION__, "'exposes' nicht im Payload gefunden oder ungültiges Format", 0);
@@ -123,7 +182,7 @@ trait Zigbee2MQTTHelper
         if (isset($Payload['options']) && is_array($Payload['options'])) {
             $missingOptions = $this->mapOptionsToVariables($Payload['options']);
             if (!empty($missingOptions)) {
-                $this->SendDebug(__FUNCTION__, "Fehlende 'options' im Payload: " . implode(", ", $missingOptions), 0);
+                $this->SendDebug(__FUNCTION__, "Fehlende 'options' im Payload: " . implode(', ', $missingOptions), 0);
             }
         } else {
             $this->SendDebug(__FUNCTION__, "'options' nicht im Payload gefunden oder ungültiges Format", 0);
@@ -135,15 +194,21 @@ trait Zigbee2MQTTHelper
 
     // Implementieren Sie die spezifischen Funktionen für jeden Expose-Typ
 
-    private function handleBinaryExpose($expose) { /* ... */ }
-    private function handleEnumExpose($expose) { /* ... */ }
-    private function handleTextExpose($expose) { /* ... */ }
+    private function handleBinaryExpose($expose)
+    { /* ... */
+    }
+    private function handleEnumExpose($expose)
+    { /* ... */
+    }
+    private function handleTextExpose($expose)
+    { /* ... */
+    }
 
     // Ihre Map-Funktionen
 
-    private function mapOptionsToVariables($options) { /* ... */ }
-
-
+    private function mapOptionsToVariables($options)
+    { /* ... */
+    }
 
     // Formatierungsfunktion Exposes->Symcon_Variable
     private function formatVariableName($key)
@@ -152,7 +217,8 @@ trait Zigbee2MQTTHelper
         return 'Z2M_' . $formatted;
     }
     // Spezifische Funktionen
-    private function handleVoltage($key, $Payload) {
+    private function handleVoltage($key, $Payload)
+    {
         if (!array_key_exists($key, $Payload)) {
             $this->SendDebug(__FUNCTION__, "Key {$key} not found in Payload", 0);
             return;
@@ -168,7 +234,8 @@ trait Zigbee2MQTTHelper
         }
     }
 
-    private function handleOnOff($key, $Payload) {
+    private function handleOnOff($key, $Payload)
+    {
         if (!array_key_exists($key, $Payload)) {
             $this->SendDebug(__FUNCTION__, "Key {$key} not found in Payload", 0);
             return;
@@ -189,9 +256,10 @@ trait Zigbee2MQTTHelper
                 break;
         }
     }
-    private function handleNumericExpose($expose) {
+    private function handleNumericExpose($expose)
+    {
         if (!isset($expose['property']) || !isset($expose['value'])) {
-            $this->SendDebug(__FUNCTION__, "Erforderliche Attribute im Expose fehlen", 0);
+            $this->SendDebug(__FUNCTION__, 'Erforderliche Attribute im Expose fehlen', 0);
             return;
         }
 
@@ -210,8 +278,8 @@ trait Zigbee2MQTTHelper
         $this->SetValue($key, $value);
     }
 
-
-    private function handleBooleanValue($key, $Payload) {
+    private function handleBooleanValue($key, $Payload)
+    {
         if (!array_key_exists($key, $Payload)) {
             $this->SendDebug(__FUNCTION__, "Key {$key} not found in Payload", 0);
             return;
@@ -224,7 +292,8 @@ trait Zigbee2MQTTHelper
         $this->SetValue($key, $state);
     }
 
-    private function handleColorRGBValue($key, $Payload) {
+    private function handleColorRGBValue($key, $Payload)
+    {
         $this->SendDebug('handleColorRGBValue Key', $key, 0);
         $this->SendDebug('handleColorRGBValue Payload', print_r($Payload, true), 0);
 
@@ -257,8 +326,8 @@ trait Zigbee2MQTTHelper
         $this->SetValue($valueKey, hexdec($RGBColor));
     }
 
-
-    private function handleColorTemperature($key, $Payload) {
+    private function handleColorTemperature($key, $Payload)
+    {
         if (!array_key_exists($key, $Payload)) {
             $this->SendDebug(__FUNCTION__, "Key {$key} not found in Payload", 0);
             return;
@@ -268,7 +337,7 @@ trait Zigbee2MQTTHelper
         $variableName = $this->formatVariableName($key);
 
         $this->SetValue($key, $value);
-        $this->SendDebug("VariableName", $variableName, 0);
+        $this->SendDebug('VariableName', $variableName, 0);
 
         // Berechnung der Farbtemperatur in Kelvin, falls der Wert größer als 0 ist
         if ($value > 0) {
@@ -278,7 +347,8 @@ trait Zigbee2MQTTHelper
         }
     }
 
-    private function handleLockUnlock($key, $Payload) {
+    private function handleLockUnlock($key, $Payload)
+    {
         if (!array_key_exists($key, $Payload)) {
             $this->SendDebug(__FUNCTION__, "Key {$key} not found in Payload", 0);
             return;
@@ -302,7 +372,8 @@ trait Zigbee2MQTTHelper
         }
     }
 
-    private function handleState($key, $Payload) {
+    private function handleState($key, $Payload)
+    {
         if (!array_key_exists($key, $Payload)) {
             $this->SendDebug(__FUNCTION__, "Key {$key} not found in Payload", 0);
             return;
@@ -332,7 +403,7 @@ trait Zigbee2MQTTHelper
                 if (is_string($key)) {
                     $this->SetValue($key, false);
                 } else {
-                    $this->SendDebug("Fehler", "Variable Name ist kein String", 0);
+                    $this->SendDebug('Fehler', 'Variable Name ist kein String', 0);
                 }
                 break;
             default:
@@ -399,65 +470,6 @@ trait Zigbee2MQTTHelper
         }
         return $state;
     }
-
-    public function setColorExt($color, string $mode, array $params = [], string $Z2MMode = 'color')
-    {
-        switch ($mode) {
-            case 'cie':
-                $this->SendDebug(__FUNCTION__, $color, 0);
-                $this->SendDebug(__FUNCTION__, $mode, 0);
-                $this->SendDebug(__FUNCTION__, json_encode($params, JSON_UNESCAPED_SLASHES), 0);
-                $this->SendDebug(__FUNCTION__, $Z2MMode, 0);
-                if (preg_match('/^#[a-f0-9]{6}$/i', strval($color))) {
-                    $color = ltrim($color, '#');
-                    $color = hexdec($color);
-                }
-                $RGB = $this->HexToRGB($color);
-                $cie = $this->RGBToCIE($RGB[0], $RGB[1], $RGB[2]);
-                if ($Z2MMode = 'color') {
-                    $Payload['color'] = $cie;
-                } elseif ($Z2MMode == 'color_rgb') {
-                    $Payload['color_rgb'] = $cie;
-                } else {
-                    return;
-                }
-
-                foreach ($params as $key => $value) {
-                    $Payload[$key] = $value;
-                }
-
-                $PayloadJSON = json_encode($Payload, JSON_UNESCAPED_SLASHES);
-                $this->SendDebug(__FUNCTION__, $PayloadJSON, 0);
-                $this->Z2MSet($PayloadJSON);
-                break;
-            default:
-                $this->SendDebug('setColor', 'Invalid Mode ' . $mode, 0);
-                break;
-        }
-    }
-    public function Z2MSet(mixed $payload)
-    {
-        $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
-        $Data['PacketType'] = 3;
-        $Data['QualityOfService'] = 0;
-        $Data['Retain'] = false;
-        $Data['Topic'] = $this->ReadPropertyString('MQTTBaseTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/set';
-        $Data['Payload'] = $payload;
-        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
-        $this->SendDebug(__FUNCTION__ . ' Topic', $Data['Topic'], 0);
-        $this->SendDebug(__FUNCTION__ . ' Payload', $Data['Payload'], 0);
-        $this->SendDataToParent($DataJSON);
-    }
-
-    protected function SetValue($Ident, $Value)
-    {
-        if (@$this->GetIDForIdent($Ident)) {
-            $this->SendDebug('Info :: SetValue for ' . $Ident, 'Value: ' . $Value, 0);
-            parent::SetValue($Ident, $Value);
-        } else {
-            $this->SendDebug('Error :: No Expose for Value', 'Ident: ' . $Ident, 0);
-        }
-    }
     private function setColor($color, $mode, string $Z2MMode = 'color')
     {
         // Überprüfen, ob $mode ein String ist
@@ -499,7 +511,7 @@ trait Zigbee2MQTTHelper
     private function mapExposesToVariables(array $exposes)
     {
         foreach ($exposes as $item) {
-            $this->SendDebug("Processing Expose/Feature", json_encode($item), 0);
+            $this->SendDebug('Processing Expose/Feature', json_encode($item), 0);
             if (isset($item['features'])) {
                 // Behandlung von 'expose' mit 'features'
                 foreach ($item['features'] as $feature) {
@@ -515,17 +527,17 @@ trait Zigbee2MQTTHelper
     private function processItem($item, $type, $parentExpose = null)
     {
         if ($type === 'numeric') {
-                $this->SendDebug("Processing Item", "Type: $type, Property: " . json_encode($item), 0);
-                $this->processNumericTypeExpose($item, $parentExpose);
-            } elseif ($type === 'binary') {
-                $this->SendDebug("Processing Item", "Type: $type, Property: " . json_encode($item), 0);
-                $this->processBooleanTypeFeature($item, $parentExpose);
-            } elseif ($type === 'boolean') {
-                $this->SendDebug("Processing Item", "Type: $type, Property: " . json_encode($item), 0);
-                $this->processBooleanTypeFeature($item, $parentExpose);
-            } elseif ($type === 'enum') {
-                $this->SendDebug("Processing Item", "Type: $type, Property: " . json_encode($item), 0);
-                $this->processStringTypeExpose($item, $parentExpose);
+            $this->SendDebug('Processing Item', "Type: $type, Property: " . json_encode($item), 0);
+            $this->processNumericTypeExpose($item, $parentExpose);
+        } elseif ($type === 'binary') {
+            $this->SendDebug('Processing Item', "Type: $type, Property: " . json_encode($item), 0);
+            $this->processBooleanTypeFeature($item, $parentExpose);
+        } elseif ($type === 'boolean') {
+            $this->SendDebug('Processing Item', "Type: $type, Property: " . json_encode($item), 0);
+            $this->processBooleanTypeFeature($item, $parentExpose);
+        } elseif ($type === 'enum') {
+            $this->SendDebug('Processing Item', "Type: $type, Property: " . json_encode($item), 0);
+            $this->processStringTypeExpose($item, $parentExpose);
         }
     }
 
@@ -541,7 +553,7 @@ trait Zigbee2MQTTHelper
         $formattedLabel = ucwords(str_replace('_', ' ', $propertyName));
         $this->SendDebug(__FUNCTION__ . ':: formattedLabel', $formattedLabel, 0);
         $uniqueProfileName = $this->generateProfileName($feature);
-        $this->SendDebug(__FUNCTION__, "Start processing enum/string type expose", 0);
+        $this->SendDebug(__FUNCTION__, 'Start processing enum/string type expose', 0);
         // Überprüfen, ob propertyName gesetzt ist
         if (!$propertyName) {
             // Fehlerbehandlung, falls 'propertyName' nicht gesetzt ist
@@ -556,7 +568,7 @@ trait Zigbee2MQTTHelper
         if (isset($feature['access']) && in_array($feature['access'], [2, 3, 6, 7])) {
             $this->EnableAction($ident);
         }
-        $this->SendDebug(__FUNCTION__, "End of processing enum/string type expose", 0);
+        $this->SendDebug(__FUNCTION__, 'End of processing enum/string type expose', 0);
     }
 
     private function processBooleanTypeFeature($feature, $parentExpose = null)
@@ -571,7 +583,7 @@ trait Zigbee2MQTTHelper
 
         // Überprüfen, ob propertyName gesetzt ist
         if (!$propertyName) {
-            $this->SendDebug(__FUNCTION__, "Property not set in feature or parentExpose", 0);
+            $this->SendDebug(__FUNCTION__, 'Property not set in feature or parentExpose', 0);
             return; // Frühes Beenden, falls 'property' nicht gesetzt ist
         }
 
@@ -586,7 +598,6 @@ trait Zigbee2MQTTHelper
         }
     }
 
-
     private function processNumericTypeExpose($feature, $parentExpose)
     {
         // Ermittle die relevanten Werte
@@ -598,11 +609,11 @@ trait Zigbee2MQTTHelper
         $variableName = $propertyName;
         $formattedLabel = ucwords(str_replace('_', ' ', $propertyName));
 
-        $this->SendDebug(__FUNCTION__, "Start processing numeric type expose", 0);
+        $this->SendDebug(__FUNCTION__, 'Start processing numeric type expose', 0);
 
         // Überprüfe, ob 'property' gesetzt ist
         if (!isset($feature['property'])) {
-            $this->SendDebug(__FUNCTION__, "Property not set in expose", 0);
+            $this->SendDebug(__FUNCTION__, 'Property not set in expose', 0);
             return; // Frühes Beenden, falls 'property' nicht gesetzt ist
         }
 
@@ -628,11 +639,11 @@ trait Zigbee2MQTTHelper
             $this->EnableAction($variableName);
         }
 
-        $this->SendDebug(__FUNCTION__, "End of processing numeric type expose", 0);
+        $this->SendDebug(__FUNCTION__, 'End of processing numeric type expose', 0);
     }
 
-
-    private function updateLocaleFile($formattedLabel, $translation = null) {
+    private function updateLocaleFile($formattedLabel, $translation = null)
+    {
         if ($translation === null) {
             $translation = $formattedLabel;
         }
@@ -747,7 +758,8 @@ trait Zigbee2MQTTHelper
         }
         return ''; // Wenn der Typ nicht 'numeric' oder 'enum' ist, wird ein leerer Profilname zurückgegeben
     }
-    private function formatProfileValue($value) {
+    private function formatProfileValue($value)
+    {
         return ucwords(strtolower($value));
     }
 }
