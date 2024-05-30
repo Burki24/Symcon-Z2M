@@ -1,8 +1,27 @@
 {
     "translations": {
         "de": {
-            "Translation 1": "Übersetzung 1",
-            "Translation 2": "Übersetzung 2"
+            "Activate Pairing Mode": "Aktiviere Paring Modus",
+            "Battery": "Batterie",
+            "Deactivate Pairing Mode": "Deaktiviere Paring Modus",
+            "Description": "Beschreibung",
+            "Devices": "Geräte",
+            "Groups": "Gruppen",
+            "IEEE Address": "IEEE Adresse",
+            "Mains (single phase)": "Netz (einphasig)",
+            "Model": "Model",
+            "Network Address": "Netzweradresse",
+            "Paring active": "Paring aktiv",
+            "Paring inactive": "Paring inaktiv",
+            "Paring Mode:": "Paring Modus:",
+            "Please use this function with attention!": "Bitte benutzen Sie diese Funktion mit Aufmerksamkeit!",
+            "Power Source": "Energiequelle",
+            "Read Variables": "Rufe Variablen ab",
+            "Settings": "Einstellungen",
+            "Supported": "Unterstützt",
+            "Type": "Typ",
+            "Unknown": "Unbekannt",
+            "Vendor": "Hersteller"
         }
     }
 }
