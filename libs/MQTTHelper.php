@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Zigbee2MQTT;
+namespace Z2M;
 
 if (!function_exists('fnmatch')) {
     function fnmatch($pattern, $string)
