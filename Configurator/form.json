@@ -35,7 +35,7 @@
                         {
                             "caption": "IEEE Address",
                             "name": "ieee_address",
-                            "width": "200px"
+                            "width": "180px"
                         },
                         {
                             "caption": "Network Address",
@@ -45,7 +45,7 @@
                         {
                             "caption": "Vendor",
                             "name": "vendor",
-                            "width": "80px"
+                            "width": "90px"
                         },
                         {
                             "caption": "Model ID",
@@ -60,12 +60,12 @@
                         {
                             "caption": "Type",
                             "name": "type",
-                            "width": "100px"
+                            "width": "auto"
                         },
                         {
                             "caption": "Power Source",
                             "name": "power_source",
-                            "width": "150px"
+                            "width": "auto"
                         }
                     ],
                     "values": []
