@@ -65,7 +65,7 @@
                         {
                             "caption": "Power Source",
                             "name": "power_source",
-                            "width": "150px"
+                            "width": "auto"
                         }
                     ],
                     "values": []
