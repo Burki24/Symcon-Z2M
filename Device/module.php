@@ -6,13 +6,15 @@ require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 require_once __DIR__ . '/../libs/ColorHelper.php';
 require_once __DIR__ . '/../libs/MQTTHelper.php';
 require_once __DIR__ . '/../libs/Zigbee2MQTTHelper.php';
+require_once __DIR__ . '/../libs/ConvertHelper.php';
 
 class Z2MDevice extends IPSModule
 {
-    use \Zigbee2MQTT\ColorHelper;
-    use \Zigbee2MQTT\MQTTHelper;
-    use \Zigbee2MQTT\VariableProfileHelper;
-    use \Zigbee2MQTT\Zigbee2MQTTHelper;
+    use \Symcon-Z2M\ColorHelper;
+    use \Symcon-Z2M\MQTTHelper;
+    use \Symcon-Z2M\VariableProfileHelper;
+    use \Symcon-Z2M\Zigbee2MQTTHelper;
+    use \Symcon-Z2M\ConvertHelper;
 
     public function Create()
     {
