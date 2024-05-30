@@ -30,7 +30,7 @@
                         {
                             "caption": "Friendlyname",
                             "name": "name",
-                            "width": "450px"
+                            "width": "420px"
                         },
                         {
                             "caption": "IEEE Address",
@@ -50,7 +50,7 @@
                         {
                             "caption": "Model ID",
                             "name": "modelID",
-                            "width": "170px"
+                            "width": "190px"
                         },
                         {
                             "caption": "Description",
