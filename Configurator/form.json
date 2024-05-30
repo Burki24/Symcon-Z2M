@@ -55,7 +55,7 @@
                         {
                             "caption": "Description",
                             "name": "description",
-                            "width": "200px"
+                            "width": "300px"
                         },
                         {
                             "caption": "Type",
