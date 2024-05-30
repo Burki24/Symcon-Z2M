@@ -3,7 +3,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../libs/MQTTHelper.php';
 
-class Zigbee2MQTTConfigurator extends IPSModule
+class Z2MConfigurator extends IPSModule
 {
     use \Zigbee2MQTT\MQTTHelper;
 
@@ -62,7 +62,7 @@ class Zigbee2MQTTConfigurator extends IPSModule
 
             $Value['create'] =
                 [
-                    'moduleID'      => '{E5BB36C6-A70B-EB23-3716-9151A09AC8A2}',
+                    'moduleID'      => '{490C25A2-D201-ECEB-E9F7-0D186C1008F7}',
                     'configuration' => [
                         'MQTTTopic'    => $device['friendly_name']
                     ]
@@ -83,7 +83,7 @@ class Zigbee2MQTTConfigurator extends IPSModule
 
             $Value['create'] =
                 [
-                    'moduleID'      => '{11BF3773-E940-469B-9DD7-FB9ACD7199A2}',
+                    'moduleID'      => '{D808C902-DFAA-5101-7B9B-4C4482CDBCB5}',
                     'configuration' => [
                         'MQTTTopic'    => $group['friendly_name']
                     ]
@@ -126,7 +126,7 @@ class Zigbee2MQTTConfigurator extends IPSModule
 
     private function getDeviceInstanceID($FriendlyName)
     {
-        $InstanceIDs = IPS_GetInstanceListByModuleID('{E5BB36C6-A70B-EB23-3716-9151A09AC8A2}');
+        $InstanceIDs = IPS_GetInstanceListByModuleID('{490C25A2-D201-ECEB-E9F7-0D186C1008F7}');
         foreach ($InstanceIDs as $id) {
             if (IPS_GetProperty($id, 'MQTTTopic') == $FriendlyName) {
                 return $id;
@@ -137,7 +137,7 @@ class Zigbee2MQTTConfigurator extends IPSModule
 
     private function getGroupInstanceID($FriendlyName)
     {
-        $InstanceIDs = IPS_GetInstanceListByModuleID('{11BF3773-E940-469B-9DD7-FB9ACD7199A2}');
+        $InstanceIDs = IPS_GetInstanceListByModuleID('{D808C902-DFAA-5101-7B9B-4C4482CDBCB5}');
         foreach ($InstanceIDs as $id) {
             if (IPS_GetProperty($id, 'MQTTTopic') == $FriendlyName) {
                 return $id;
