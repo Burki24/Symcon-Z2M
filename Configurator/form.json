@@ -30,7 +30,7 @@
                         {
                             "caption": "Friendlyname",
                             "name": "name",
-                            "width": "30%"
+                            "width": "28%"
                         },
                         {
                             "caption": "IEEE Address",
@@ -55,17 +55,17 @@
                         {
                             "caption": "Description",
                             "name": "description",
-                            "width": "auto"
+                            "width": "20%"
                         },
                         {
                             "caption": "Type",
                             "name": "type",
-                            "width": "auto"
+                            "width": "5%"
                         },
                         {
                             "caption": "Power Source",
                             "name": "power_source",
-                            "width": "auto"
+                            "width": "5%"
                         }
                     ],
                     "values": []
