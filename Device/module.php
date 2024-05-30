@@ -1,36 +1,45 @@
 <?php
 
 declare(strict_types=1);
-	class Z2MDevice extends IPSModule
-	{
-		public function Create()
-		{
-			//Never delete this line!
-			parent::Create();
 
-			$this->RequireParent('{8062CF2B-600E-41D6-AD4B-1BA66C32D6ED}');
-		}
+require_once __DIR__ . '/../libs/VariableProfileHelper.php';
+require_once __DIR__ . '/../libs/ColorHelper.php';
+require_once __DIR__ . '/../libs/MQTTHelper.php';
+require_once __DIR__ . '/../libs/Zigbee2MQTTHelper.php';
 
-		public function Destroy()
-		{
-			//Never delete this line!
-			parent::Destroy();
-		}
+class Zigbee2MQTTDevice extends IPSModule
+{
+    use \Zigbee2MQTT\ColorHelper;
+    use \Zigbee2MQTT\MQTTHelper;
+    use \Zigbee2MQTT\VariableProfileHelper;
+    use \Zigbee2MQTT\Zigbee2MQTTHelper;
 
-		public function ApplyChanges()
-		{
-			//Never delete this line!
-			parent::ApplyChanges();
-		}
+    public function Create()
+    {
+        //Never delete this line!
+        parent::Create();
+        $this->ConnectParent('{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}');
+        $this->RegisterPropertyString('MQTTBaseTopic', 'zigbee2mqtt');
+        $this->RegisterPropertyString('MQTTTopic', '');
+        $this->createVariableProfiles();
+    }
 
-		public function Send(string $Text, string $ClientIP, int $ClientPort)
-		{
-			$this->SendDataToParent(json_encode(['DataID' => '{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}', "ClientIP" => $ClientIP, "ClientPort" => $ClientPort, "Buffer" => $Text]));
-		}
+    public function ApplyChanges()
+    {
+        //Never delete this line!
+        parent::ApplyChanges();
+        $this->ConnectParent('{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}');
+        //Setze Filter für ReceiveData
+        $Filter1 = preg_quote('"Topic":"' . $this->ReadPropertyString('MQTTBaseTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '"');
+        $Filter2 = preg_quote('"Topic":"symcon/' . $this->ReadPropertyString('MQTTBaseTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/');
+        //$this->SendDebug('Filter ::', $MQTTTopic, 0);
+        //$this->SetReceiveDataFilter('.*' . $MQTTTopic . '.*');
 
-		public function ReceiveData($JSONString)
-		{
-			$data = json_decode($JSONString);
-			IPS_LogMessage('Device RECV', utf8_decode($data->Buffer . ' - ' . $data->ClientIP . ' - ' . $data->ClientPort));
-		}
-	}
+        $this->SendDebug('Filter ', '.*(' . $Filter1 . '|' . $Filter2 . ').*', 0);
+        $this->SetReceiveDataFilter('.*(' . $Filter1 . '|' . $Filter2 . ').*');
+        if (($this->HasActiveParent()) && (IPS_GetKernelRunlevel() == KR_READY)) {
+            $this->getDeviceInfo();
+        }
+        $this->SetStatus(102);
+    }
+}
