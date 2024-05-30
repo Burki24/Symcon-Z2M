@@ -50,7 +50,7 @@
                         {
                             "caption": "Model ID",
                             "name": "modelID",
-                            "width": "200px"
+                            "width": "170px"
                         },
                         {
                             "caption": "Description",
