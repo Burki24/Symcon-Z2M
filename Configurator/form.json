@@ -60,7 +60,7 @@
                         {
                             "caption": "Type",
                             "name": "type",
-                            "width": "6%"
+                            "width": "50px"
                         },
                         {
                             "caption": "Power Source",
