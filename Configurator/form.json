@@ -3,8 +3,11 @@
         {
             "type": "ValidationTextBox",
             "name": "MQTTBaseTopic",
-            "caption": "MQTT Base Topic",
-                "label": "Your topic in configuration.yaml"
+            "caption": "MQTT Base Topic"
+        },
+        {
+            "Type": "label",
+            "caption": "Your topic in configuration.yaml"
         }
     ],
     "actions": [
