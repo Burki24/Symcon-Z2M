@@ -55,12 +55,12 @@
                         {
                             "caption": "Description",
                             "name": "description",
-                            "width": "20%"
+                            "width": "200px"
                         },
                         {
                             "caption": "Type",
                             "name": "type",
-                            "width": "50px"
+                            "width": "120px"
                         },
                         {
                             "caption": "Power Source",
