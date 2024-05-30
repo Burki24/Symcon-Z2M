@@ -10,11 +10,11 @@ require_once __DIR__ . '/../libs/ConvertHelper.php';
 
 class Z2MDevice extends IPSModule
 {
-    use \SymconZ2M\ColorHelper;
-    use \SymconZ2M\MQTTHelper;
-    use \SymconZ2M\VariableProfileHelper;
-    use \SymconZ2M\Zigbee2MQTTHelper;
-    use \SymconZ2M\ConvertHelper;
+    use \Z2MS\ColorHelper;
+    use \Z2MS\MQTTHelper;
+    use \Z2MS\VariableProfileHelper;
+    use \Z2MS\Zigbee2MQTTHelper;
+    use \Z2MS\ConvertHelper;
 
     public function Create()
     {

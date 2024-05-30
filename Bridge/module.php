@@ -5,10 +5,10 @@ require_once __DIR__ . '/../libs/MQTTHelper.php';
 require_once __DIR__ . '/../libs/Zigbee2MQTTBridgeHelper.php';
 require_once __DIR__ . '/../libs/Zigbee2MQTTHelper.php';
 
-class Zigbee2MQTTBridge extends IPSModule
+class Z2MBridge extends IPSModule
 {
-    use \Zigbee2MQTT\Zigbee2MQTTBridgeHelper;
-    use \Zigbee2MQTT\MQTTHelper;
+    use \Z2MS\Zigbee2MQTTBridgeHelper;
+    use \Z2MS\MQTTHelper;
 
     public function Create()
     {
