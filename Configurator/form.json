@@ -1,13 +1,13 @@
 {
     "elements": [
         {
+            "type": "Label",
+            "caption": "Your topic in configuration.yaml"
+        },
+        {
             "type": "ValidationTextBox",
             "name": "MQTTBaseTopic",
             "caption": "MQTT Base Topic"
-        },
-        {
-            "type": "Label",
-            "caption": "Your topic in configuration.yaml"
         }
     ],
     "actions": [
@@ -28,6 +28,11 @@
                     },
                     "columns": [
                         {
+                            "caption": "Friendlyname",
+                            "name": "name",
+                            "width": "200px"
+                        },
+                        {
                             "caption": "IEEE Address",
                             "name": "ieee_address",
                             "width": "200px"
@@ -36,11 +41,6 @@
                             "caption": "Network Address",
                             "name": "networkAddress",
                             "visible": false
-                        },
-                        {
-                            "caption": "Friendlyname",
-                            "name": "name",
-                            "width": "200px"
                         },
                         {
                             "caption": "Vendor",
