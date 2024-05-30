@@ -6,7 +6,7 @@
             "caption": "MQTT Base Topic"
         },
         {
-            "type": "label",
+            "type": "Label",
             "caption": "Your topic in configuration.yaml"
         }
     ],
