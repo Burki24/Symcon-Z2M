@@ -30,7 +30,7 @@
                         {
                             "caption": "Friendlyname",
                             "name": "name",
-                            "width": "28%"
+                            "width": "450"
                         },
                         {
                             "caption": "IEEE Address",
