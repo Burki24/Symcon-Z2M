@@ -660,14 +660,17 @@ trait Zigbee2MQTTHelper
 
     private function mapExposesToVariables(array $exposes)
     {
-        // Hilfsfunktion zur Registrierung von Variablen
+        // Debugging für die übergebenen Exposes
         $this->SendDebug(__FUNCTION__ . ':: All Exposes', json_encode($exposes), 0);
 
         foreach ($exposes as $expose) {
-            if (isset($expose['name'])) {
-                foreach ($expose['name'] as $feature) {
+            // Überprüfen, ob 'features' vorhanden ist, um die richtige Struktur zu identifizieren
+            if (isset($expose['features'])) {
+                foreach ($expose['features'] as $feature) {
                     $this->registerVariable($feature);
                 }
+            } else {
+                $this->registerVariable($expose);
             }
         }
         $this->SendDebug(__FUNCTION__ . ':: Missed Exposes', json_encode($missedVariables ?? []), 0);
