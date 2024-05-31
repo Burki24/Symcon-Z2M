@@ -684,7 +684,7 @@ trait Zigbee2MQTTHelper
         $property = $feature['property'];
         $ident = 'Z2MS_' . $property;
         $label = $feature['label'] ?? ucwords(str_replace('_', ' ', $property));
-        $translate = $this->convertKeyToReadableFormat($label)
+        $translate = $this->convertKeyToReadableFormat($label);
         $profileName = $this->registerVariableProfile($feature);
 
         // Einheiten, die auf Float-Werte hinweisen
