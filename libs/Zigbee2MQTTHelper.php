@@ -664,8 +664,8 @@ trait Zigbee2MQTTHelper
         $this->SendDebug(__FUNCTION__ . ':: All Exposes', json_encode($exposes), 0);
 
         foreach ($exposes as $expose) {
-            if (isset($device['name'])) {
-                foreach ($device['name'] as $feature) {
+            if (isset($expose['name'])) {
+                foreach ($expose['name'] as $feature) {
                     $this->registerVariable($feature);
                 }
             }
