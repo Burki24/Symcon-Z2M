@@ -625,11 +625,11 @@ trait Zigbee2MQTTHelper
         }
     }
 
-    private function registerNumericProfile($expose)
+    private function registerNumericProfile($expose, $isFloat = false)
     {
         $ProfileName = 'Z2MS.' . $expose['name'];
-        $min = isset($expose['value_min']);
-        $max = isset($expose['value_max']);
+        $min = isset($expose['value_min']) ? $expose['value_min'] : null;
+        $max = isset($expose['value_max']) ? $expose['value_max'] : null;
 
         // ProfileName erweitern nur wenn min und max vorhanden sind
         $fullRangeProfileName = $ProfileName;
@@ -640,14 +640,22 @@ trait Zigbee2MQTTHelper
         $presetProfileName = $fullRangeProfileName . '_Presets';
         $unit = isset($expose['unit']) ? ' ' . $expose['unit'] : '';
 
-        $this->SendDebug("registerNumericProfile", "ProfileName: $fullRangeProfileName, min: " . ($min ?? 'default') . ", max: " . ($max ?? 'default') . ", unit: $unit", 0);
+        $this->SendDebug("registerNumericProfile", "ProfileName: $fullRangeProfileName, min: " . ($min ?? 'default') . ", max: " . ($max ?? 'default') . ", unit: $unit, isFloat: " . ($isFloat ? 'true' : 'false'), 0);
 
         // Register profile with min and max values if they are provided
         if (!IPS_VariableProfileExists($fullRangeProfileName)) {
             if ($min !== null && $max !== null) {
-                $this->RegisterProfileInteger($fullRangeProfileName, 'Bulb', '', $unit, $min, $max, 1);
+                if ($isFloat) {
+                    $this->RegisterProfileFloat($fullRangeProfileName, 'Bulb', '', $unit, $min, $max, 1, 2);
+                } else {
+                    $this->RegisterProfileInteger($fullRangeProfileName, 'Bulb', '', $unit, $min, $max, 1);
+                }
             } else {
-                $this->RegisterProfileInteger($fullRangeProfileName, 'Bulb', '', $unit, 0, 0, 1);
+                if ($isFloat) {
+                    $this->RegisterProfileFloat($fullRangeProfileName, 'Bulb', '', $unit, 0, 0, 1, 2);
+                } else {
+                    $this->RegisterProfileInteger($fullRangeProfileName, 'Bulb', '', $unit, 0, 0, 1);
+                }
             }
         }
 
@@ -655,14 +663,18 @@ trait Zigbee2MQTTHelper
             if (IPS_VariableProfileExists($presetProfileName)) {
                 IPS_DeleteVariableProfile($presetProfileName);
             }
-            $this->RegisterProfileInteger($presetProfileName, 'Bulb', '', '', 0, 0, 0);
+            if ($isFloat) {
+                $this->RegisterProfileFloat($presetProfileName, 'Bulb', '', '', 0, 0, 0, 2);
+            } else {
+                $this->RegisterProfileInteger($presetProfileName, 'Bulb', '', '', 0, 0, 0);
+            }
             foreach ($expose['presets'] as $preset) {
                 $presetValue = $preset['value'];
                 $presetName = $this->Translate(ucwords(str_replace('_', ' ', $preset['name'])));
 
-            $this->SendDebug("Preset Info", "presetValue: $presetValue, presetName: $presetName", 0);
+                $this->SendDebug("Preset Info", "presetValue: $presetValue, presetName: $presetName", 0);
 
-            IPS_SetVariableProfileAssociation($presetProfileName, $presetValue, $presetName, '', 0xFFFFFF);
+                IPS_SetVariableProfileAssociation($presetProfileName, $presetValue, $presetName, '', 0xFFFFFF);
             }
         }
 
@@ -693,11 +705,9 @@ trait Zigbee2MQTTHelper
 
         $type = $feature['type'];
         $property = $feature['property'];
-        $ident = 'Z2MS_' . $property;
+        $ident = 'Z2MS_' . ucfirst($property);
         $label = $feature['label'] ?? ucwords(str_replace('_', ' ', $property));
-        $translate = $this->convertKeyToReadableFormat($label);
-        $profileName = $this->registerVariableProfile($feature);
-        // $this->SendDebug('registerVariable', 'ProfileName: '. $profileName, 0);
+
         // Einheiten, die auf Float-Werte hinweisen
         $floatUnits = [
             '°C', '°F', 'K',            // Temperature
@@ -726,30 +736,33 @@ trait Zigbee2MQTTHelper
             'dB', 'dBA', 'dBC'          // Decibels
         ];
 
+        $isFloat = in_array($feature['unit'] ?? '', $floatUnits);
+
         switch ($type) {
             case 'binary':
-                $this->RegisterVariableBoolean($ident, $this->Translate($translate), '~Switch');
+                $this->RegisterVariableBoolean($ident, $this->Translate($label), '~Switch');
                 $this->EnableAction($ident);
                 break;
             case 'numeric':
-                $unit = $feature['unit'] ?? '';
-                if (in_array($unit, $floatUnits)) {
-                    $this->RegisterVariableFloat($ident, $this->Translate($translate), $profileName('mainProfile'));
+                $profileName = $this->registerNumericProfile($feature, $isFloat);
+                if ($isFloat) {
+                    $this->RegisterVariableFloat($ident, $this->Translate($label), $profileName['mainProfile']);
                 } else {
-                    $this->RegisterVariableInteger($ident, $this->Translate($translate), $profileName('mainProfile'));
+                    $this->RegisterVariableInteger($ident, $this->Translate($label), $profileName['mainProfile']);
                 }
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
                 break;
             case 'enum':
-                $this->RegisterVariableString($ident, $this->Translate($translate), $profileName('mainProfile'));
+                $profileName = $this->registerVariableProfile($feature);
+                $this->RegisterVariableString($ident, $this->Translate($label), $profileName);
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
                 break;
             case 'text':
-                $this->RegisterVariableString($ident, $this->Translate($translate));
+                $this->RegisterVariableString($ident, $this->Translate($label));
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
