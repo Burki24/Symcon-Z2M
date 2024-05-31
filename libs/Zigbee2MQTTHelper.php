@@ -686,13 +686,42 @@ trait Zigbee2MQTTHelper
         $label = $feature['label'] ?? ucfirst(str_replace('_', ' ', $property));
         $profileName = $this->registerVariableProfile($feature);
 
+        // Einheiten, die auf Float-Werte hinweisen
+        $floatUnits = [
+            '°C', '°F', 'K',            // Temperature
+            'mg/L', 'µg/m³', 'g/m³',    // Concentration
+            'mV', 'V', 'kV', 'µV',      // Voltage
+            'A', 'mA', 'µA',            // Current
+            'W', 'kW', 'MW', 'GW',      // Power
+            'Wh', 'kWh', 'MWh', 'GWh',  // Energy
+            'Hz', 'kHz', 'MHz', 'GHz',  // Frequency
+            'lux', 'lx', 'cd',          // Light
+            'ppm', 'ppb', 'ppt',        // Parts per...
+            'pH',                       // pH
+            'm', 'cm', 'mm', 'µm', 'nm', // Length
+            'l', 'ml', 'dl', 'm³', 'cm³', 'mm³', // Volume
+            'g', 'kg', 'mg', 'µg', 'ton', 'lb', // Mass
+            's', 'ms', 'µs', 'ns', 'min', 'h', 'd', // Time
+            'rad', 'sr',                // Angles
+            'Bq', 'Gy', 'Sv', 'kat', 'mol', 'mol/l', // Radiation and chemistry
+            'N', 'Pa', 'kPa', 'MPa', 'GPa', // Force and pressure
+            'bar', 'mbar', 'atm', 'torr', 'psi', // Pressure
+            'ohm', 'kohm', 'mohm',      // Resistance
+            'S', 'mS', 'µS',            // Conductance
+            'F', 'mF', 'µF', 'nF', 'pF', // Capacitance
+            'H', 'mH', 'µH',            // Inductance
+            '%',                        // Percentage
+            'dB', 'dBA', 'dBC'          // Decibels
+        ];
+
         switch ($type) {
             case 'binary':
                 $this->RegisterVariableBoolean($ident, $this->Translate($label), '~Switch');
                 $this->EnableAction($ident);
                 break;
             case 'numeric':
-                if (isset($feature['value_step']) && $feature['value_step'] > 0) {
+                $unit = $feature['unit'] ?? '';
+                if (in_array($unit, $floatUnits)) {
                     $this->RegisterVariableFloat($ident, $this->Translate($label), $profileName['mainProfile']);
                 } else {
                     $this->RegisterVariableInteger($ident, $this->Translate($label), $profileName['mainProfile']);
