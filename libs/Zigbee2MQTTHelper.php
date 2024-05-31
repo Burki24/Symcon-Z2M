@@ -11,20 +11,10 @@ trait Zigbee2MQTTHelper
         // Hier werden die Fälle behandelt, wo standard-Aktionen nicht funktionieren.
         // boolean zu string, wenn ausser true und false andere Werte gesendet werden.
         // numeric werden speziell formatiert, wenn ein spezielles Format gewünscht wird.
-        'Z2MS_ChildLock'                         => ['type' => 'lockunlock', 'dataType' =>'string'],
-        'Z2MS_StateWindow'                       => ['type' => 'openclose', 'dataType' =>'string'],
-        'Z2MS_AutoLock'                          => ['type' => 'automode', 'dataType' => 'string'],
-        'Z2MS_ValveState'                        => ['type' => 'valve', 'dataType' => 'string'],
-        'Z2MS_EcoTemperature'                    => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-        'Z2MS_MaxTemperature'                    => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-        'Z2MS_MinTemperature'                    => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-        'Z2MS_TemperatureMax'                    => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-        'Z2MS_TemperatureMin'                    => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-        'Z2MS_OccupiedHeatingSetpointScheduled'  => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-        'Z2MS_ComfortTemperature'                => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-        'Z2MS_LocalTemperatureCalibration'       => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-        'Z2MS_OpenWindowTemperature'             => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-        'Z2MS_HolidayTemperature'                => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
+        'Z2MS_child_lock'                         => ['type' => 'lockunlock', 'dataType' =>'string'],
+        'Z2MS_state_window'                       => ['type' => 'openclose', 'dataType' =>'string'],
+        'Z2MS_autolock'                          => ['type' => 'automode', 'dataType' => 'string'],
+        'Z2MS_valve_state'                        => ['type' => 'valve', 'dataType' => 'string'],
     ];
 
     public function RequestAction($ident, $value)
