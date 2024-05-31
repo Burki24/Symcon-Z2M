@@ -627,17 +627,28 @@ trait Zigbee2MQTTHelper
 
     private function registerNumericProfile($expose)
     {
-        $ProfileName = 'Z2M.' . $expose['name'];
-        $min = $expose['value_min'] ?? 0;
-        $max = $expose['value_max'] ?? 0;
-        $fullRangeProfileName = $ProfileName . $min . '_' . $max;
+        $ProfileName = 'Z2MS.' . $expose['name'];
+        $min = isset($expose['value_min']) ? $expose['value_min'] : null;
+        $max = isset($expose['value_max']) ? $expose['value_max'] : null;
+
+        // ProfileName erweitern nur wenn min und max vorhanden sind
+        $fullRangeProfileName = $ProfileName;
+        if ($min !== null && $max !== null) {
+            $fullRangeProfileName .= $min . '_' . $max;
+        }
+
         $presetProfileName = $fullRangeProfileName . '_Presets';
         $unit = isset($expose['unit']) ? ' ' . $expose['unit'] : '';
 
-        $this->SendDebug("registerNumericProfile", "ProfileName: $fullRangeProfileName, min: $min, max: $max, unit: $unit", 0);
+        $this->SendDebug("registerNumericProfile", "ProfileName: $fullRangeProfileName, min: " . ($min ?? 'default') . ", max: " . ($max ?? 'default') . ", unit: $unit", 0);
 
+        // Register profile with min and max values if they are provided
         if (!IPS_VariableProfileExists($fullRangeProfileName)) {
-            $this->RegisterProfileInteger($fullRangeProfileName, 'Bulb', '', $unit, $min, $max, 1);
+            if ($min !== null && $max !== null) {
+                $this->RegisterProfileInteger($fullRangeProfileName, 'Bulb', '', $unit, $min, $max, 1);
+            } else {
+                $this->RegisterProfileInteger($fullRangeProfileName, 'Bulb', '', $unit, 0, 0, 1);
+            }
         }
 
         if (isset($expose['presets']) && !empty($expose['presets'])) {
@@ -649,9 +660,9 @@ trait Zigbee2MQTTHelper
                 $presetValue = $preset['value'];
                 $presetName = $this->Translate(ucwords(str_replace('_', ' ', $preset['name'])));
 
-                $this->SendDebug("Preset Info", "presetValue: $presetValue, presetName: $presetName", 0);
+            $this->SendDebug("Preset Info", "presetValue: $presetValue, presetName: $presetName", 0);
 
-                IPS_SetVariableProfileAssociation($presetProfileName, $presetValue, $presetName, '', 0xFFFFFF);
+            IPS_SetVariableProfileAssociation($presetProfileName, $presetValue, $presetName, '', 0xFFFFFF);
             }
         }
 
