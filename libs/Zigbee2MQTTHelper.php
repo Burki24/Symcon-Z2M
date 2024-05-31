@@ -22,7 +22,7 @@ trait Zigbee2MQTTHelper
         // Behandle spezielle Fälle separat
         // Fälle, wie z.B. die ganzen Farben, wo nicht einfach nur das $value gesetzt werden kann
         switch ($ident) {
-        case 'Z2MS_ColorTempPresets':
+        case 'Z2MS_color_temp_presets':
             $this->SendDebug(__FUNCTION__ . ' ColorTempPresets', $value, 0);
             // Erstellen des Payloads für die Farbtemperatur
             $payload = json_encode(['color_temp' => $value], JSON_UNESCAPED_SLASHES);
@@ -30,19 +30,19 @@ trait Zigbee2MQTTHelper
             // Senden des Payloads
             $this->Z2MSet($payload);
             return;
-        case 'Z2MS_Color':
+        case 'Z2MS_color':
             $this->SendDebug(__FUNCTION__ . ' Color', $value, 0);
             $this->setColor($value, 'cie');
             return;
-        case 'Z2MS_ColorHS':
+        case 'Z2MS_color_hs':
             $this->SendDebug(__FUNCTION__ . ' Color HS', $value, 0);
             $this->setColor($value, 'hs');
             return;
-        case 'Z2MS_ColorRGB':
+        case 'Z2MS_color_rgb':
             $this->SendDebug(__FUNCTION__ . ' :: Color RGB', $value, 0);
             $this->setColor($value, 'cie', 'color_rgb');
             return;
-        case 'Z2MS_ColorTempKelvin':
+        case 'Z2MS_color_temp_kelvin':
             $convertedValue = strval(intval(round(1000000 / $value, 0)));
             $payloadKey = $this->convertIdentToPayloadKey($ident);
             $payload = [$payloadKey => $convertedValue];
@@ -92,11 +92,11 @@ trait Zigbee2MQTTHelper
 
             if (array_key_exists('Topic', $Buffer)) {
                 if (fnmatch('*/availability', $Buffer['Topic'])) {
-                    $this->RegisterVariableBoolean('Z2MS_Status', $this->Translate('Status'), 'Z2MS.DeviceStatus');
+                    $this->RegisterVariableBoolean('Z2MS_status', $this->Translate('Status'), 'Z2MS.device_status');
                     if ($Buffer['Payload'] == 'online') {
-                        $this->SetValue('Z2MS_Status', true);
+                        $this->SetValue('Z2MS_status', true);
                     } else {
-                        $this->SetValue('Z2MS_Status', false);
+                        $this->SetValue('Z2MS_status', false);
                     }
                 }
             }
@@ -165,7 +165,7 @@ trait Zigbee2MQTTHelper
                             $handled = true;
                             break;
                         case 'child_lock':
-                            $this->handleStateChange('child_lock', 'Z2MS_ChildLock', 'Child Lock', $payload, ['LOCK' => true, 'UNLOCK' => false]);
+                            $this->handleStateChange('child_lock', 'Z2MS_child_lock', 'Child Lock', $payload, ['LOCK' => true, 'UNLOCK' => false]);
                             $handled = true;
                             break;
                         case 'color':
@@ -193,64 +193,64 @@ trait Zigbee2MQTTHelper
                                 $brightnessRgb = isset($payload['brightness_rgb']) ? $payload['brightness_rgb'] : 255;
                                 $RGBColor = ltrim($this->xyToHEX($colorRgb['x'], $colorRgb['y'], $brightnessRgb), '#');
                                 $this->SendDebug(__FUNCTION__ . ' Color :: RGB HEX', $RGBColor, 0);
-                                $this->SetValue('Z2MS_ColorRGB', hexdec($RGBColor));
+                                $this->SetValue('Z2MS_color_rgb', hexdec($RGBColor));
                             }
                             $handled = true;
                             break;
                         case 'color_temp_cct':
-                            $this->SetValue('Z2MS_ColorTempCCT', $payload['color_temp_cct']);
+                            $this->SetValue('Z2MS_Color_temp_cct', $payload['color_temp_cct']);
                             if ($payload['color_temp_cct'] > 0) {
-                                $this->SetValue('Z2MS_ColorTempCCTKelvin', 1000000 / $payload['color_temp_cct']); //Convert to Kelvin
+                                $this->SetValue('Z2MS_color_temp_cct_kelvin', 1000000 / $payload['color_temp_cct']); //Convert to Kelvin
                             }
                             $handled = true;
                             break;
                         case 'color_temp_rgb':
-                            $this->SetValue('Z2MS_ColorTempRGB', $payload['color_temp_rgb']);
+                            $this->SetValue('Z2MS_color_temp_rgb', $payload['color_temp_rgb']);
                             if ($payload['color_temp_rgb'] > 0) {
-                                $this->SetValue('Z2MS_ColorTempRGBKelvin', 1000000 / $payload['color_temp_rgb']); //Convert to Kelvin
+                                $this->SetValue('Z2MS_color_temp_rgb_kelvin', 1000000 / $payload['color_temp_rgb']); //Convert to Kelvin
                             }
                             $handled = true;
                             break;
                         case 'color_temp':
-                            $this->SetValue('Z2MS_ColorTemp', $payload['color_temp']);
+                            $this->SetValue('Z2MS_color_temp', $payload['color_temp']);
                             if ($payload['color_temp'] > 0) {
-                                $this->SetValue('Z2MS_ColorTempKelvin', 1000000 / $payload['color_temp']); //Convert to Kelvin
+                                $this->SetValue('Z2MS_colortemp_kelvin', 1000000 / $payload['color_temp']); //Convert to Kelvin
                             }
                             $handled = true;
                             break;
                         case 'brightness_rgb':
-                            $this->EnableAction('Z2MS_BrightnessRGB');
-                            $this->SetValue('Z2MS_BrightnessRGB', $payload['brightness_rgb']);
+                            $this->EnableAction('Z2MS_brightness_rgb');
+                            $this->SetValue('Z2MS_brightness_rgb', $payload['brightness_rgb']);
                             $handled = true;
                             break;
                         case 'color_temp_startup_rgb':
-                            $this->SetValue('Z2MS_ColorTempStartupRGB', $payload['color_temp_startup_rgb']);
-                            $this->EnableAction('Z2MS_ColorTempStartupRGB');
+                            $this->SetValue('Z2MS_color_temp_startup_rgb', $payload['color_temp_startup_rgb']);
+                            $this->EnableAction('Z2MS_color_tTempstartup_rgb');
                             $handled = true;
                             break;
                         case 'color_temp_startup_cct':
-                            $this->SetValue('Z2MS_ColorTempStartupCCT', $payload['color_temp_startup_cct']);
-                            $this->EnableAction('Z2MS_ColorTempStartupCCT');
+                            $this->SetValue('Z2MS_color_temp_startup_cct', $payload['color_temp_startup_cct']);
+                            $this->EnableAction('Z2MS_color_temp_startup_cct');
                             $handled = true;
                             break;
                         case 'color_temp_startup':
-                            $this->SetValue('Z2MS_ColorTempStartup', $payload['color_temp_startup']);
-                            $this->EnableAction('Z2MS_ColorTempStartup');
+                            $this->SetValue('Z2MS_color_temp_startup', $payload['color_temp_startup']);
+                            $this->EnableAction('Z2MS_color_temp_startup');
                             $handled = true;
                             break;
                         case 'state_rgb':
-                            $this->handleStateChange('state_rgb', 'Z2MS_StateRGB', 'State_rgb', $payload, );
-                            $this->EnableAction('Z2MS_StateRGB');
+                            $this->handleStateChange('state_rgb', 'Z2MS_state_rgb', 'State_rgb', $payload, );
+                            $this->EnableAction('Z2MS_state_rgb');
                             $handled = true;
                             break;
                         case 'state_cct':
-                            $this->handleStateChange('state_cct', 'Z2MS_StateCCT', 'State_cct', $payload);
-                            $this->EnableAction('Z2MS_StateCCT');
+                            $this->handleStateChange('state_cct', 'Z2MS_state_cct', 'State_cct', $payload);
+                            $this->EnableAction('Z2MS_state_cct');
                             $handled = true;
                             break;
                         case 'last_seen':
                             $translate = $this->convertKeyToReadableFormat($key);
-                            $this->RegisterVariableInteger('Z2MS_LastSeen', $this->Translate($translate), '~UnixTimestamp');
+                            $this->RegisterVariableInteger('Z2MS_last_seen', $this->Translate($translate), '~UnixTimestamp');
                             $this->SetValue($ident, $value / 1000);
                             $handled = true;
                             break;
