@@ -125,7 +125,7 @@ trait Zigbee2MQTTHelper
 
             $payload = json_decode($Buffer['Payload'], true);
             foreach ($payload as $key => $value) {
-                $ident = 'Z2MS_' . implode('', array_map('ucfirst', explode('_', $key)));
+                $ident = 'Z2MS_' . $key;
                 $variableID = @$this->GetIDForIdent($ident);
 
                 if ($variableID !== false) {
