@@ -686,7 +686,7 @@ trait Zigbee2MQTTHelper
         $label = $feature['label'] ?? ucwords(str_replace('_', ' ', $property));
         $translate = $this->convertKeyToReadableFormat($label);
         $profileName = $this->registerVariableProfile($feature);
-        $this->SendDebug('registerVariable', 'ProfileName: '. $profileName, 0);
+        // $this->SendDebug('registerVariable', 'ProfileName: '. $profileName, 0);
         // Einheiten, die auf Float-Werte hinweisen
         $floatUnits = [
             '°C', '°F', 'K',            // Temperature
