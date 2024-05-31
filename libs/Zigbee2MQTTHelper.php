@@ -723,16 +723,16 @@ trait Zigbee2MQTTHelper
             case 'numeric':
                 $unit = $feature['unit'] ?? '';
                 if (in_array($unit, $floatUnits)) {
-                    $this->RegisterVariableFloat($ident, $this->Translate($translate), $profileName);
+                    $this->RegisterVariableFloat($ident, $this->Translate($translate), $profileName('mainProfile'));
                 } else {
-                    $this->RegisterVariableInteger($ident, $this->Translate($translate), $profileName);
+                    $this->RegisterVariableInteger($ident, $this->Translate($translate), $profileName('mainProfile'));
                 }
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
                 break;
             case 'enum':
-                $this->RegisterVariableString($ident, $this->Translate($translate), $profileName);
+                $this->RegisterVariableString($ident, $this->Translate($translate), $profileName('mainProfile'));
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
