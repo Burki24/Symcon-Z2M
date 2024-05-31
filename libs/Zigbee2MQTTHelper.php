@@ -663,9 +663,9 @@ trait Zigbee2MQTTHelper
         // Hilfsfunktion zur Registrierung von Variablen
         $this->SendDebug(__FUNCTION__ . ':: All Exposes', json_encode($exposes), 0);
 
-        foreach ($exposes as $device) {
-            if (isset($device['features'])) {
-                foreach ($device['features'] as $feature) {
+        foreach ($exposes as $expose) {
+            if (isset($device['name'])) {
+                foreach ($device['name'] as $feature) {
                     $this->registerVariable($feature);
                 }
             }
