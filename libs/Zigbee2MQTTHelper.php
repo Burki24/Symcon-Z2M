@@ -705,7 +705,7 @@ trait Zigbee2MQTTHelper
 
         $type = $feature['type'];
         $property = $feature['property'];
-        $ident = 'Z2MS_' . $property;
+        $ident = 'Z2MS_' . $property; // Kein ucfirst
         $label = $feature['label'] ?? ucwords(str_replace('_', ' ', $property));
 
         // Einheiten, die auf Float-Werte hinweisen
