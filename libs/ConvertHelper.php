@@ -6,6 +6,15 @@ namespace Z2MS;
 
 trait ConvertHelper
 {
+    private function convertIdentToPayloadKey($ident)
+    {
+        // Gehört zu RequestAction
+        $identWithoutPrefix = str_replace('Z2MS_', '', $ident);
+        $this->SendDebug('Info :: convertIdentToPayloadKey', 'Ident: '. $ident.'-> IdentWithoutPrefix: '. $identWithoutPrefix, 0);
+        $payloadKey = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $identWithoutPrefix));
+        $this->SendDebug('Info :: convertIdentToPayloadKey', 'Ident: '. $ident.'-> PayloadKey: '. $payloadKey, 0);
+        return $payloadKey;
+    }
     private function convertKeyToReadableFormat($key)
     {
         $this->SendDebug(__FUNCTION__, "Schlüssel: $key", 0);
@@ -18,17 +27,9 @@ trait ConvertHelper
     {
         $identParts = explode('_', $key); // Teilt den Schlüssel an Unterstrichen
         $capitalizedParts = array_map('ucfirst', $identParts); // Kapitalisiert jeden Teil
-        $ident = 'Z2M_' . implode('', $capitalizedParts); // Fügt die Teile mit einem Präfix zusammen
+        $ident = 'Z2MS_' . implode('', $capitalizedParts); // Fügt die Teile mit einem Präfix zusammen
         $this->SendDebug(__FUNCTION__, "Ident: $ident", 0);
         return $ident;
-    }
-    private function convertIdentToPayloadKey($ident) // Neu
-    {
-        // Gehört zu RequestAction
-        // Wandelt den Ident zu einem gültigen Expose um
-        $identWithoutPrefix = str_replace('Z2M_', '', $ident);
-        $payloadKey = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $identWithoutPrefix));
-        return $payloadKey;
     }
     private function convertStateBasedOnMapping($key, $value, $variableType) // Neu
     {
