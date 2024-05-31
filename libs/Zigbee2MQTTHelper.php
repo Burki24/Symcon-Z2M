@@ -682,7 +682,7 @@ trait Zigbee2MQTTHelper
 
         $type = $feature['type'];
         $property = $feature['property'];
-        $ident = 'Z2MS_' . ucfirst($property);
+        $ident = 'Z2MS_' . $property;
         $label = $feature['label'] ?? ucfirst(str_replace('_', ' ', $property));
         $profileName = $this->registerVariableProfile($feature);
 
