@@ -657,7 +657,7 @@ trait Zigbee2MQTTHelper
         {
             $type = $feature['type'];
             $property = $feature['property'];
-            $name = 'Z2M_' . ucfirst($property);
+            $name = 'Z2MS_' . ucfirst($property);
             $label = $feature['label'] ?? ucfirst(str_replace('_', ' ', $property));
 
             switch ($type) {
