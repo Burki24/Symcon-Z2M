@@ -27,7 +27,7 @@ trait ConvertHelper
     {
         $identParts = explode('_', $key); // Teilt den Schlüssel an Unterstrichen
         $capitalizedParts = array_map('ucfirst', $identParts); // Kapitalisiert jeden Teil
-        $ident = 'Z2M_' . implode('', $capitalizedParts); // Fügt die Teile mit einem Präfix zusammen
+        $ident = 'Z2MS_' . implode('', $capitalizedParts); // Fügt die Teile mit einem Präfix zusammen
         $this->SendDebug(__FUNCTION__, "Ident: $ident", 0);
         return $ident;
     }
