@@ -675,6 +675,8 @@ trait Zigbee2MQTTHelper
 
     private function registerVariable($feature)
     {
+        $this->SendDebug('registerVariable', 'Feature: ' . json_encode($feature), 0);
+
         $type = $feature['type'];
         $property = $feature['property'];
         $ident = 'Z2MS_' . ucfirst($property);
@@ -714,4 +716,4 @@ trait Zigbee2MQTTHelper
         }
     }
 }
-?>
+
