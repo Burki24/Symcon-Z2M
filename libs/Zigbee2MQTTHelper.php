@@ -25,7 +25,6 @@ trait Zigbee2MQTTHelper
         'Z2M_LocalTemperatureCalibration'       => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
         'Z2M_OpenWindowTemperature'             => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
         'Z2M_HolidayTemperature'                => ['type' => 'numeric', 'dataType' => 'float', 'format' => '%.2f'],
-
     ];
 
     public function RequestAction($ident, $value)
@@ -88,6 +87,7 @@ trait Zigbee2MQTTHelper
     {
         $this->symconExtensionCommand('getGroup', $this->ReadPropertyString('MQTTTopic'));
     }
+
     public function ReceiveData($JSONString) // Neu
     {
         if (!empty($this->ReadPropertyString('MQTTTopic'))) {
@@ -308,6 +308,7 @@ trait Zigbee2MQTTHelper
             }
         }
     }
+
     public function setColorExt($color, string $mode, array $params = [], string $Z2MMode = 'color')
     {
         switch ($mode) {
@@ -484,6 +485,7 @@ trait Zigbee2MQTTHelper
             $this->RegisterProfileIntegerEx('Z2M.WindowOpenInternal', '', '', '', $Associations);
         }
     }
+
     protected function SetValue($ident, $value) // Unverändert
     {
         if (@$this->GetIDForIdent($ident)) {
@@ -493,6 +495,7 @@ trait Zigbee2MQTTHelper
             $this->SendDebug('Error :: No Expose for Value', 'Ident: ' . $ident, 0);
         }
     }
+
     private function handleStateChange($payloadKey, $valueId, $debugTitle, $Payload, $stateMapping = null) // Neu
     {
         // Gehört zu RequestAction
@@ -510,6 +513,7 @@ trait Zigbee2MQTTHelper
             }
         }
     }
+
     private function setColor(int $color, string $mode, string $Z2MMode = 'color')
     {
         switch ($mode) {
@@ -556,12 +560,14 @@ trait Zigbee2MQTTHelper
                 break;
         }
     }
+
     // Folgende Funktionen entfallen durch das neue RequestAction:
     // private function OnOff(bool $Value)
     // private function ValveState(bool $Value)
     // private function LockUnlock(bool $Value)
     // private function OpenClose(bool $Value)
     // private function AutoManual(bool $Value)
+
     private function registerVariableProfile($expose) // Unverändert
     {
         $ProfileName = 'Z2MS.' . $expose['name'];
@@ -618,6 +624,7 @@ trait Zigbee2MQTTHelper
                 return false;
         }
     }
+
     private function registerNumericProfile($expose)
     {
         $ProfileName = 'Z2M.' . $expose['name'];
@@ -650,59 +657,61 @@ trait Zigbee2MQTTHelper
 
         return ['mainProfile' => $fullRangeProfileName, 'presetProfile' => $presetProfileName];
     }
+
     private function mapExposesToVariables(array $exposes)
     {
         // Hilfsfunktion zur Registrierung von Variablen
-        function registerVariable($feature)
-        {
-            $type = $feature['type'];
-            $property = $feature['property'];
-            $ident = 'Z2MS_' . ucfirst($property);
-            $label = $feature['label'] ?? ucfirst(str_replace('_', ' ', $property));
-
-            switch ($type) {
-                case 'binary':
-                    $this->RegisterVariableBoolean($ident, $this->Translate($label), '~Switch');
-                    $this->EnableAction($ident);
-                    break;
-                case 'numeric':
-                    if (isset($feature['value_step']) && $feature['value_step'] > 0) {
-                        $this->RegisterVariableFloat($ident, $this->Translate($label), $ProfileName);
-                    } else {
-                        $this->RegisterVariableInteger($ident, $this->Translate($label), $ProfileName);
-                    }
-                    if ($feature['access'] >= 3) {
-                        $this->EnableAction($ident);
-                    }
-                    break;
-                case 'enum':
-                    $this->RegisterVariableString($ident, $this->Translate($label), $ProfileName);
-                    if ($feature['access'] >= 3) {
-                        $this->EnableAction($ident);
-                    }
-                    break;
-                case 'text':
-                    $this->RegisterVariableString($ident, $this->Translate($label), $ProfileName);
-                    if ($feature['access'] >= 3) {
-                        $this->EnableAction($ident);
-                    }
-                    break;
-                default:
-                    $missedVariables[$type][] = $feature;
-                    break;
-            }
-        }
-
         $this->SendDebug(__FUNCTION__ . ':: All Exposes', json_encode($exposes), 0);
 
         foreach ($exposes as $device) {
-            if (isset($device['property'])) {
-                foreach ($device['prpoerty'] as $feature) {
-                    registerVariable($feature);
+            if (isset($device['features'])) {
+                foreach ($device['features'] as $feature) {
+                    $this->registerVariable($feature);
                 }
             }
         }
         $this->SendDebug(__FUNCTION__ . ':: Missed Exposes', json_encode($missedVariables ?? []), 0);
     }
 
+    private function registerVariable($feature)
+    {
+        $type = $feature['type'];
+        $property = $feature['property'];
+        $ident = 'Z2MS_' . ucfirst($property);
+        $label = $feature['label'] ?? ucfirst(str_replace('_', ' ', $property));
+        $profileName = $this->registerVariableProfile($feature);
+
+        switch ($type) {
+            case 'binary':
+                $this->RegisterVariableBoolean($ident, $this->Translate($label), '~Switch');
+                $this->EnableAction($ident);
+                break;
+            case 'numeric':
+                if (isset($feature['value_step']) && $feature['value_step'] > 0) {
+                    $this->RegisterVariableFloat($ident, $this->Translate($label), $profileName['mainProfile']);
+                } else {
+                    $this->RegisterVariableInteger($ident, $this->Translate($label), $profileName['mainProfile']);
+                }
+                if ($feature['access'] >= 3) {
+                    $this->EnableAction($ident);
+                }
+                break;
+            case 'enum':
+                $this->RegisterVariableString($ident, $this->Translate($label), $profileName);
+                if ($feature['access'] >= 3) {
+                    $this->EnableAction($ident);
+                }
+                break;
+            case 'text':
+                $this->RegisterVariableString($ident, $this->Translate($label));
+                if ($feature['access'] >= 3) {
+                    $this->EnableAction($ident);
+                }
+                break;
+            default:
+                $missedVariables[$type][] = $feature;
+                break;
+        }
+    }
 }
+?>
