@@ -628,8 +628,8 @@ trait Zigbee2MQTTHelper
     private function registerNumericProfile($expose)
     {
         $ProfileName = 'Z2MS.' . $expose['name'];
-        $min = isset($expose['value_min']) ? $expose['value_min'] : null;
-        $max = isset($expose['value_max']) ? $expose['value_max'] : null;
+        $min = isset($expose['value_min']);
+        $max = isset($expose['value_max']);
 
         // ProfileName erweitern nur wenn min und max vorhanden sind
         $fullRangeProfileName = $ProfileName;
