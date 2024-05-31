@@ -717,28 +717,28 @@ trait Zigbee2MQTTHelper
 
         switch ($type) {
             case 'binary':
-                $this->RegisterVariableBoolean($ident, $this->Translate($label), '~Switch');
+                $this->RegisterVariableBoolean($ident, $this->Translate($translate), '~Switch');
                 $this->EnableAction($ident);
                 break;
             case 'numeric':
                 $unit = $feature['unit'] ?? '';
                 if (in_array($unit, $floatUnits)) {
-                    $this->RegisterVariableFloat($ident, $this->Translate($label), $profileName['mainProfile']);
+                    $this->RegisterVariableFloat($ident, $this->Translate($translate), $profileName['mainProfile']);
                 } else {
-                    $this->RegisterVariableInteger($ident, $this->Translate($label), $profileName['mainProfile']);
+                    $this->RegisterVariableInteger($ident, $this->Translate($translate), $profileName['mainProfile']);
                 }
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
                 break;
             case 'enum':
-                $this->RegisterVariableString($ident, $this->Translate($label), $profileName);
+                $this->RegisterVariableString($ident, $this->Translate($translate), $profileName);
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
                 break;
             case 'text':
-                $this->RegisterVariableString($ident, $this->Translate($label));
+                $this->RegisterVariableString($ident, $this->Translate($translate));
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
