@@ -657,34 +657,34 @@ trait Zigbee2MQTTHelper
         {
             $type = $feature['type'];
             $property = $feature['property'];
-            $name = 'Z2MS_' . ucfirst($property);
+            $ident = 'Z2MS_' . ucfirst($property);
             $label = $feature['label'] ?? ucfirst(str_replace('_', ' ', $property));
 
             switch ($type) {
                 case 'binary':
-                    $this->RegisterVariableBoolean($name, $label, '~Switch');
-                    $this->EnableAction($name);
+                    $this->RegisterVariableBoolean($ident, $this->Translate($label), '~Switch');
+                    $this->EnableAction($ident);
                     break;
                 case 'numeric':
                     if (isset($feature['value_step']) && $feature['value_step'] > 0) {
-                        $this->RegisterVariableFloat($name, $label);
+                        $this->RegisterVariableFloat($ident, $this->Translate($label), $ProfileName);
                     } else {
-                        $this->RegisterVariableInteger($name, $label);
+                        $this->RegisterVariableInteger($ident, $this->Translate($label), $ProfileName);
                     }
                     if ($feature['access'] >= 3) {
-                        $this->EnableAction($name);
+                        $this->EnableAction($ident);
                     }
                     break;
                 case 'enum':
-                    $this->RegisterVariableString($name, $label);
+                    $this->RegisterVariableString($ident, $this->Translate($label), $ProfileName);
                     if ($feature['access'] >= 3) {
-                        $this->EnableAction($name);
+                        $this->EnableAction($ident);
                     }
                     break;
                 case 'text':
-                    $this->RegisterVariableString($name, $label);
+                    $this->RegisterVariableString($ident, $this->Translate($label), $ProfileName);
                     if ($feature['access'] >= 3) {
-                        $this->EnableAction($name);
+                        $this->EnableAction($ident);
                     }
                     break;
                 default:
