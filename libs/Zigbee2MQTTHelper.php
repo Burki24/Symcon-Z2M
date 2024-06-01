@@ -430,22 +430,4 @@ trait Zigbee2MQTTHelper
                 break;
         }
     }
-
-    private function handleColor($value, $ident)
-    {
-        if (is_array($value)) {
-            if (isset($value['x']) && isset($value['y'])) {
-                $RGBColor = ltrim($this->xyToHEX($value['x'], $value['y'], $value['brightness'] ?? 255), '#');
-                $this->SetValue($ident, hexdec($RGBColor));
-            } elseif (isset($value['hue']) && isset($value['saturation'])) {
-                $RGBColor = ltrim($this->HSToRGB($value['hue'], $value['saturation'], 255), '#');
-                $this->SetValue($ident, hexdec($RGBColor));
-            }
-            return true;
-        }
-        return false;
-    }
-
-
-
 }
