@@ -592,8 +592,11 @@ trait Zigbee2MQTTHelper
         $type = $feature['type'];
         $property = $feature['property'];
         $ident = 'Z2MS_' . $property; // Kein ucfirst
-        $label = $feature['label'] ?? ucwords(str_replace('_', ' ', $property));
-        $name = $feature['name'] ?? $property;
+
+        // Sicherstellen, dass jedes Wort im Label groß geschrieben wird
+        $label = $feature['label'] ?? str_replace('_', ' ', $property);
+        $label = ucwords($label);
+
         // Einheiten, die auf Float-Werte hinweisen
         $floatUnits = [
             '°C', '°F', 'K',            // Temperature
@@ -644,10 +647,12 @@ trait Zigbee2MQTTHelper
                 break;
             case 'enum':
                 $profileName = $this->registerVariableProfile($feature);
-                $this->SendDebug('registerVariable', 'Profile Name: '. $profileName, 0);
-                $this->RegisterVariableString($ident, $this->Translate($label), $profileName);
-                if ($feature['access'] & 0b010) {
-                    $this->EnableAction($ident);
+                $this->SendDebug('registerVariable', 'Profile Name: ' . $profileName, 0);
+                if ($profileName !== false) {
+                    $this->RegisterVariableString($ident, $this->Translate($label), $profileName);
+                    if ($feature['access'] & 0b010) {
+                        $this->EnableAction($ident);
+                    }
                 }
                 break;
             case 'text':
@@ -660,6 +665,9 @@ trait Zigbee2MQTTHelper
                 $missedVariables[$type][] = $feature;
                 break;
         }
+
+        // Für das Setzen der Werte basierend auf dem Payload
+        $this->SendDebug(__FUNCTION__, 'booleanMappings: ' . json_encode($this->booleanMappings), 0);
     }
 }
 
