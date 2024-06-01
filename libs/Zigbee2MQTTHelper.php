@@ -7,10 +7,6 @@ namespace Z2MS;
 trait Zigbee2MQTTHelper
 {
     private $stateTypeMapping = [
-        // Gehört zu RequestAction
-        // Hier werden die Fälle behandelt, wo standard-Aktionen nicht funktionieren.
-        // boolean zu string, wenn ausser true und false andere Werte gesendet werden.
-        // numeric werden speziell formatiert, wenn ein spezielles Format gewünscht wird.
         'Z2MS_child_lock'                         => ['type' => 'lockunlock', 'dataType' =>'string'],
         'Z2MS_state_window'                       => ['type' => 'openclose', 'dataType' =>'string'],
         'Z2MS_autolock'                          => ['type' => 'automode', 'dataType' => 'string'],
@@ -55,9 +51,6 @@ trait Zigbee2MQTTHelper
         $variableID = $this->GetIDForIdent($ident);
         $variableInfo = IPS_GetVariable($variableID);
         $variableType = $variableInfo['VariableType'];
-
-        // Wandelt den Ident zum passenden Expose um
-        $payloadKey = str_replace('Z2MS_', '', $ident);
 
         // konvertiert den Wert in ein für Z2MSet nutzbaren Wert
         // Keine Unterscheidung mehr in strval($value), $value (numerisch), etc. mehr notwendig
@@ -129,12 +122,6 @@ trait Zigbee2MQTTHelper
                         case 'update_available':
                             $this->RegisterVariableBoolean('Z2MS_Update', $this->Translate('Update'), '');
                             $this->SetValue('Z2MS_Update', $payload['update_available']);
-                            $handled = true;
-                            break;
-                        case 'scene':
-                            $this->LogMessage('Please contact module developer. Undefined variable: scene', KL_WARNING);
-                            //$this->RegisterVariableString('Z2MS_Scene', $this->Translate('Scene'), '');
-                            //$this->SetValue('Z2MS_Scene', $payload['scene']);
                             $handled = true;
                             break;
 
@@ -352,95 +339,9 @@ trait Zigbee2MQTTHelper
 
     protected function createVariableProfiles() // Unverändert
     {
-        /**
-         * if (!IPS_VariableProfileExists('Z2M.Sensitivity')) {
-         * $Associations = [];
-         * $Associations[] = [1, $this->Translate('Medium'), '', -1];
-         * $Associations[] = [2, $this->Translate('Low'), '', -1];
-         * $Associations[] = [3, $this->Translate('High'), '', -1];
-         * $this->RegisterProfileIntegerEx('Z2M.Sensitivity', '', '', '', $Associations);
-         * }
-         */
-        /**
-         * if (!IPS_VariableProfileExists('Z2M.Intensity.254')) {
-         * $this->RegisterProfileInteger('Z2M.Intensity.254', 'Intensity', '', '%', 0, 254, 1);
-         * }
-         */
         if (!IPS_VariableProfileExists('Z2M.RadarSensitivity')) {
             $this->RegisterProfileInteger('Z2M.RadarSensitivity', 'Intensity', '', '', 0, 10, 1);
         }
-
-        /**
-         * if (!IPS_VariableProfileExists('Z2M.ColorTemperatureKelvin')) {
-         * $this->RegisterProfileInteger('Z2M.ColorTemperatureKelvin', 'Intensity', '', '', 2000, 6535, 1);
-         * }
-         */
-
-        /**
-         * if (!IPS_VariableProfileExists('Z2M.RadarScene')) {
-         * $this->RegisterProfileStringEx('Z2M.RadarScene', 'Menu', '', '', [
-         * ['default', $this->Translate('Default'), '', 0xFFFFFF],
-         * ['area', $this->Translate('Area'), '', 0x0000FF],
-         * ['toilet', $this->Translate('Toilet'), '', 0x0000FF],
-         * ['bedroom', $this->Translate('Bedroom'), '', 0x0000FF],
-         * ['parlour', $this->Translate('Parlour'), '', 0x0000FF],
-         * ['office', $this->Translate('Office'), '', 0x0000FF],
-         * ['hotel', $this->Translate('Hotel'), '', 0x0000FF]
-         * ]);
-         * }
-         */
-        /**
-         * if (!IPS_VariableProfileExists('Z2M.SystemMode')) {
-         * $Associations = [];
-         * $Associations[] = [1, $this->Translate('Off'), '', -1];
-         * $Associations[] = [2, $this->Translate('Auto'), '', -1];
-         * $Associations[] = [3, $this->Translate('Heat'), '', -1];
-         * $Associations[] = [4, $this->Translate('Cool'), '', -1];
-         * $this->RegisterProfileIntegerEx('Z2M.SystemMode', '', '', '', $Associations);
-         * }
-         */
-        /**
-         * if (!IPS_VariableProfileExists('Z2M.PowerOutageMemory')) {
-         * $Associations = [];
-         * $Associations[] = [1, $this->Translate('Off'), '', -1];
-         * $Associations[] = [2, $this->Translate('On'), '', -1];
-         * $Associations[] = [3, $this->Translate('Restore'), '', -1];
-         * $this->RegisterProfileIntegerEx('Z2M.PowerOutageMemory', '', '', '', $Associations);
-         * }
-         */
-
-        /**
-         * if (!IPS_VariableProfileExists('Z2M.ThermostatPreset')) {
-         * $Associations = [];
-         * $Associations[] = [1, $this->Translate('Manual'), '', -1];
-         * $Associations[] = [2, $this->Translate('Boost'), '', -1];
-         * $Associations[] = [3, $this->Translate('Complexes Program'), '', -1];
-         * $Associations[] = [4, $this->Translate('Comfort'), '', -1];
-         * $Associations[] = [5, $this->Translate('Eco'), '', -1];
-         * $Associations[] = [6, $this->Translate('Heat'), '', -1];
-         * $Associations[] = [7, $this->Translate('Schedule'), '', -1];
-         * $Associations[] = [8, $this->Translate('Away'), '', -1];
-         * $this->RegisterProfileIntegerEx('Z2M.ThermostatPreset', '', '', '', $Associations);
-         * }
-         */
-        /**
-         * if (!IPS_VariableProfileExists('Z2M.ColorTemperature')) {
-         * IPS_CreateVariableProfile('Z2M.ColorTemperature', 1);
-         * }
-         * IPS_SetVariableProfileDigits('Z2M.ColorTemperature', 0);
-         * IPS_SetVariableProfileIcon('Z2M.ColorTemperature', 'Bulb');
-         * IPS_SetVariableProfileText('Z2M.ColorTemperature', '', ' Mired');
-         * IPS_SetVariableProfileValues('Z2M.ColorTemperature', 50, 500, 1);
-         */
-
-        /**
-         * if (!IPS_VariableProfileExists('Z2M.ConsumerConnected')) {
-         * $this->RegisterProfileBooleanEx('Z2M.ConsumerConnected', 'Plug', '', '', [
-         * [false, $this->Translate('not connected'),  '', 0xFF0000],
-         * [true, $this->Translate('connected'),  '', 0x00FF00]
-         * ]);
-         * }
-         */
         if (!IPS_VariableProfileExists('Z2M.DeviceStatus')) {
             $this->RegisterProfileBooleanEx('Z2M.DeviceStatus', 'Network', '', '', [
                 [false, 'Offline',  '', 0xFF0000],
@@ -686,7 +587,6 @@ trait Zigbee2MQTTHelper
                 $this->registerVariable($expose);
             }
         }
-        $this->SendDebug(__FUNCTION__ . ':: Missed Exposes', json_encode($missedVariables ?? []), 0);
     }
 
     private function registerVariable($feature)
@@ -731,7 +631,9 @@ trait Zigbee2MQTTHelper
         switch ($type) {
             case 'binary':
                 $this->RegisterVariableBoolean($ident, $this->Translate($label), '~Switch');
-                $this->EnableAction($ident);
+                if ($feature['access'] >= 3) {
+                    $this->EnableAction($ident);
+                }
                 break;
             case 'numeric':
                 $profileName = $this->registerNumericProfile($feature, $isFloat);
