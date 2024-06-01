@@ -640,7 +640,8 @@ trait Zigbee2MQTTHelper
                 break;
             case 'enum':
                 $profileName = $this->registerVariableProfile($feature);
-                $this->RegisterVariableString($ident, $this->Translate($label), $profileName['mainProfile']);
+                $this->SendDebug('registerVariable', 'Profile Name: '. $profileName, 0);
+                $this->RegisterVariableString($ident, $this->Translate($label), $profileName);
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
