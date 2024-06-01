@@ -413,18 +413,18 @@ trait Zigbee2MQTTHelper
                     case 'color':
                         if ($feature['name'] == 'color_xy') {
                             $this->SendDebug(__FUNCTION__, 'Erkannter Modus: color_xy', 0);
-                            $this->RegisterVariableInteger('Z2MS_Color', $this->Translate('Color'), 'HexColor');
+                            $this->RegisterVariableInteger('Z2MS_color', $this->Translate('Color'), 'HexColor');
                             $this->EnableAction('Z2MS_Color');
                         } elseif ($feature['name'] == 'color_hs') {
                             $this->SendDebug(__FUNCTION__, 'Erkannter Modus: color_hs', 0);
-                            $this->RegisterVariableInteger('Z2MS_ColorHS', $this->Translate('Color HS'), 'HexColor');
-                            $this->EnableAction('Z2MS_ColorHS');
+                            $this->RegisterVariableInteger('Z2MS_color_hs', $this->Translate('Color HS'), 'HexColor');
+                            $this->EnableAction('Z2MS_color_hs');
                         }
                         break;
                     case 'color_rgb':
                         if ($feature['name'] == 'color_xy') {
-                            $this->RegisterVariableInteger('Z2MS_ColorRGB', $this->Translate('Color'), 'HexColor');
-                            $this->EnableAction('Z2MS_ColorRGB');
+                            $this->RegisterVariableInteger('Z2MS_color_rgb', $this->Translate('Color'), 'HexColor');
+                            $this->EnableAction('Z2MS_color_rgb');
                         }
                         break;
                     default:
