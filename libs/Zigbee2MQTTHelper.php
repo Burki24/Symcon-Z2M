@@ -51,11 +51,10 @@ trait Zigbee2MQTTHelper
         $variableID = $this->GetIDForIdent($ident);
         $variableInfo = IPS_GetVariable($variableID);
         $variableType = $variableInfo['VariableType'];
-        // Wandelt den Ident zum passenden Expose um
         $payloadKey = str_replace('Z2MS_', '', $ident);
 
         // konvertiert den Wert in ein für Z2MSet nutzbaren Wert
-        // Keine Unterscheidung mehr in strval($value), $value (numerisch), etc. mehr notwendig
+        // Keine Unterscheidung mehr in strval($value), $value (numerisch), etc. notwendig
         $payload = [$payloadKey => $this->convertStateBasedOnMapping($ident, $value, $variableType)];
         $this->SendDebug(__FUNCTION__, "Payload: ". json_encode($payload), 0);
         // Erstellung des passenden Payloads und versand durch Z2MSet
@@ -154,10 +153,10 @@ trait Zigbee2MQTTHelper
                             $this->SetValue('Z2MS_ActionTransitionTime', $payload['action_transition_time']);
                             $handled = true;
                             break;
-                        // case 'child_lock':
-                        //     $this->handleStateChange('child_lock', 'Z2MS_child_lock', 'Child Lock', $payload, ['LOCK' => true, 'UNLOCK' => false]);
-                        //     $handled = true;
-                        //     break;
+                        case 'child_lock':
+                            $this->handleStateChange('child_lock', 'Z2MS_child_lock', 'Child Lock', $payload, ['LOCK' => true, 'UNLOCK' => false]);
+                            $handled = true;
+                            break;
                         case 'color':
                             if (is_array($value)) {
                                 if (isset($value['x']) && isset($value['y'])) {
