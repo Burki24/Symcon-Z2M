@@ -54,7 +54,7 @@ trait Zigbee2MQTTHelper
 
         // konvertiert den Wert in ein für Z2MSet nutzbaren Wert
         // Keine Unterscheidung mehr in strval($value), $value (numerisch), etc. mehr notwendig
-        $payload = [$payloadKey => $this->convertStateBasedOnMapping(str_replace('Z2MS_', '', $ident), $value, $variableType)];
+        $payload = [$this->convertStateBasedOnMapping(str_replace('Z2MS_', '', $ident), $value, $variableType)];
 
         // Erstellung des passenden Payloads und versand durch Z2MSet
         $payloadJSON = json_encode($payload, JSON_UNESCAPED_SLASHES);
