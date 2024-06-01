@@ -44,7 +44,7 @@ trait Zigbee2MQTTHelper
             return;
         case 'Z2MS_color_temp_kelvin':
             $convertedValue = strval(intval(round(1000000 / $value, 0)));
-            $payloadKey = $this->convertIdentToPayloadKey($ident);
+            $payloadKey = str_replace('Z2MS_', '', $ident);
             $payload = [$payloadKey => $convertedValue];
             $payloadJSON = json_encode($payload, JSON_UNESCAPED_SLASHES);
             $this->Z2MSet($payloadJSON);

@@ -6,15 +6,6 @@ namespace Z2MS;
 
 trait ConvertHelper
 {
-    private function convertIdentToPayloadKey($ident)
-    {
-        // Gehört zu RequestAction
-        $identWithoutPrefix = str_replace('Z2MS_', '', $ident);
-        $this->SendDebug('Info :: convertIdentToPayloadKey', 'Ident: '. $ident.'-> IdentWithoutPrefix: '. $identWithoutPrefix, 0);
-        $payloadKey = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $identWithoutPrefix));
-        $this->SendDebug('Info :: convertIdentToPayloadKey', 'Ident: '. $ident.'-> PayloadKey: '. $payloadKey, 0);
-        return $payloadKey;
-    }
     private function convertKeyToReadableFormat($key)
     {
         $this->SendDebug(__FUNCTION__, "Schlüssel: $key", 0);
