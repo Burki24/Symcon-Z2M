@@ -11,7 +11,7 @@ trait Zigbee2MQTTHelper
         // Hier werden die Fälle behandelt, wo standard-Aktionen nicht funktionieren.
         // boolean zu string, wenn ausser true und false andere Werte gesendet werden.
         // numeric werden speziell formatiert, wenn ein spezielles Format gewünscht wird.
-        'Z2MS_child_lock'                         => ['type' => 'lockunlock', 'dataType' =>'string'],
+        // 'Z2MS_child_lock'                         => ['type' => 'lockunlock', 'dataType' =>'string'],
         'Z2MS_state_window'                       => ['type' => 'openclose', 'dataType' =>'string'],
         'Z2MS_autolock'                          => ['type' => 'automode', 'dataType' => 'string'],
         'Z2MS_valve_state'                        => ['type' => 'valve', 'dataType' => 'string'],
@@ -164,10 +164,10 @@ trait Zigbee2MQTTHelper
                             $this->SetValue('Z2MS_ActionTransitionTime', $payload['action_transition_time']);
                             $handled = true;
                             break;
-                        case 'child_lock':
-                            $this->handleStateChange('child_lock', 'Z2MS_child_lock', 'Child Lock', $payload, ['LOCK' => true, 'UNLOCK' => false]);
-                            $handled = true;
-                            break;
+                        // case 'child_lock':
+                        //     $this->handleStateChange('child_lock', 'Z2MS_child_lock', 'Child Lock', $payload, ['LOCK' => true, 'UNLOCK' => false]);
+                        //     $handled = true;
+                        //     break;
                         case 'color':
                             if (is_array($value)) {
                                 if (isset($value['x']) && isset($value['y'])) {
