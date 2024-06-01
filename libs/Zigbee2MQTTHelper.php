@@ -410,10 +410,18 @@ trait Zigbee2MQTTHelper
                     $this->EnableAction($ident);
                 }
                 break;
+            case 'composite':
+                // Handle composite type by registering each sub-feature
+                foreach ($feature['features'] as $subFeature) {
+                    $subFeature['property'] = $property . '_' . $subFeature['property'];
+                    $this->registerVariable($subFeature);
+                }
+                break;
             default:
                 $this->SendDebug('registerVariable', 'Unhandled type: ' . $type, 0);
                 break;
         }
     }
+
 
 }
