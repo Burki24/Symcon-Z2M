@@ -361,12 +361,38 @@ trait Zigbee2MQTTHelper
                 }
                 break;
             case 'numeric':
-                $profileName = $this->registerNumericProfile($feature, $isFloat);
-                $isFloat
-                    ? $this->RegisterVariableFloat($ident, $this->Translate($label), $profileName['mainProfile'])
-                    : $this->RegisterVariableInteger($ident, $this->Translate($label), $profileName['mainProfile']);
+                $profiles = $this->registerNumericProfile($feature, $isFloat);
+                $profileName = $profiles['mainProfile'];
+                $this->SendDebug('registerVariable', 'Profile Name: ' . $profileName, 0);
+
+                // Register the main variable
+                if ($isFloat) {
+                    $this->RegisterVariableFloat($ident, $this->Translate($label), $profileName);
+                } else {
+                    $this->RegisterVariableInteger($ident, $this->Translate($label), $profileName);
+                }
+
                 if ($feature['access'] & 0b010) {
                     $this->EnableAction($ident);
+                }
+
+                // Register the preset variable if presets are available
+                if (isset($profiles['presetProfile']) && $profiles['presetProfile'] !== null) {
+                    $presetIdent = $ident . '_presets';
+                    $presetLabel = $label . ' Presets';
+                    $presetProfileName = $profiles['presetProfile'];
+
+                    $this->SendDebug('registerVariable', 'Preset Profile Name: ' . $presetProfileName, 0);
+
+                    if ($isFloat) {
+                        $this->RegisterVariableFloat($presetIdent, $this->Translate($presetLabel), $presetProfileName);
+                    } else {
+                        $this->RegisterVariableInteger($presetIdent, $this->Translate($presetLabel), $presetProfileName);
+                    }
+
+                    if ($feature['access'] & 0b010) {
+                        $this->EnableAction($presetIdent);
+                    }
                 }
                 break;
             case 'enum':
@@ -389,4 +415,5 @@ trait Zigbee2MQTTHelper
                 break;
         }
     }
+
 }
