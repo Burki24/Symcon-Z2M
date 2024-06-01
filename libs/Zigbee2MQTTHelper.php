@@ -291,12 +291,12 @@ trait Zigbee2MQTTHelper
         if (!IPS_VariableProfileExists($fullRangeProfileName)) {
             if ($min !== null && $max !== null) {
                 $isFloat
-                    ? $this->RegisterProfileFloat($fullRangeProfileName, 'Bulb', '', $unit, $min, $max, 1, 2)
-                    : $this->RegisterProfileInteger($fullRangeProfileName, 'Bulb', '', $unit, $min, $max, 1);
+                    ? $this->RegisterProfileFloat($fullRangeProfileName, '', '', $unit, $min, $max, 1, 2)
+                    : $this->RegisterProfileInteger($fullRangeProfileName, '', '', $unit, $min, $max, 1);
             } else {
                 $isFloat
-                    ? $this->RegisterProfileFloat($fullRangeProfileName, 'Bulb', '', $unit, 0, 0, 1, 2)
-                    : $this->RegisterProfileInteger($fullRangeProfileName, 'Bulb', '', $unit, 0, 0, 1);
+                    ? $this->RegisterProfileFloat($fullRangeProfileName, '', '', $unit, 0, 0, 1, 2)
+                    : $this->RegisterProfileInteger($fullRangeProfileName, '', '', $unit, 0, 0, 1);
             }
         }
 
@@ -305,8 +305,8 @@ trait Zigbee2MQTTHelper
                 IPS_DeleteVariableProfile($presetProfileName);
             }
             $isFloat
-                ? $this->RegisterProfileFloat($presetProfileName, 'Bulb', '', '', 0, 0, 0, 2)
-                : $this->RegisterProfileInteger($presetProfileName, 'Bulb', '', '', 0, 0, 0);
+                ? $this->RegisterProfileFloat($presetProfileName, '', '', '', 0, 0, 0, 2)
+                : $this->RegisterProfileInteger($presetProfileName, '', '', '', 0, 0, 0);
 
             foreach ($expose['presets'] as $preset) {
                 $presetValue = $preset['value'];
