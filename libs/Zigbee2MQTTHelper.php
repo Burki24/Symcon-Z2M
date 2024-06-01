@@ -52,7 +52,7 @@ trait Zigbee2MQTTHelper
         $variableInfo = IPS_GetVariable($variableID);
         $variableType = $variableInfo['VariableType'];
         // Wandelt den Ident zum passenden Expose um
-        $payloadKey = $this->convertIdentToPayloadKey($ident);
+        $payloadKey = str_replace('Z2MS_', '', $ident);
 
         // konvertiert den Wert in ein für Z2MSet nutzbaren Wert
         // Keine Unterscheidung mehr in strval($value), $value (numerisch), etc. mehr notwendig
