@@ -365,7 +365,6 @@ trait Zigbee2MQTTHelper
                 $profileName = $profiles['mainProfile'];
                 $this->SendDebug('registerVariable', 'Profile Name: ' . $profileName, 0);
 
-                // Register the main variable
                 if ($isFloat) {
                     $this->RegisterVariableFloat($ident, $this->Translate($label), $profileName);
                 } else {
@@ -376,7 +375,6 @@ trait Zigbee2MQTTHelper
                     $this->EnableAction($ident);
                 }
 
-                // Register the preset variable if presets are available
                 if (isset($profiles['presetProfile']) && $profiles['presetProfile'] !== null) {
                     $presetIdent = $ident . '_presets';
                     $presetLabel = $label . ' Presets';
@@ -411,18 +409,27 @@ trait Zigbee2MQTTHelper
                 }
                 break;
             case 'composite':
-                if ($property === 'color' && $feature['name'] === 'color_xy') {
-                    // Register the main variable for the color
-                    $this->RegisterVariableString($ident, $this->Translate($label), 'HexColor');
-                    if ($feature['access'] & 0b010) {
-                        $this->EnableAction($ident);
-                    }
-
-                    // Handle the sub-features for x and y
-                    foreach ($feature['features'] as $subFeature) {
-                        $subIdent = $ident . '_' . $subFeature['property'];
-                        $this->handleColor([$subFeature['property'] => $subFeature['value']], $subIdent);
-                    }
+                switch ($feature['property']) {
+                    case 'color':
+                        if ($feature['name'] == 'color_xy') {
+                            $this->SendDebug(__FUNCTION__, 'Erkannter Modus: color_xy', 0);
+                            $this->RegisterVariableInteger('Z2MS_Color', $this->Translate('Color'), 'HexColor');
+                            $this->EnableAction('Z2MS_Color');
+                        } elseif ($feature['name'] == 'color_hs') {
+                            $this->SendDebug(__FUNCTION__, 'Erkannter Modus: color_hs', 0);
+                            $this->RegisterVariableInteger('Z2MS_ColorHS', $this->Translate('Color HS'), 'HexColor');
+                            $this->EnableAction('Z2MS_ColorHS');
+                        }
+                        break;
+                    case 'color_rgb':
+                        if ($feature['name'] == 'color_xy') {
+                            $this->RegisterVariableInteger('Z2MS_ColorRGB', $this->Translate('Color'), 'HexColor');
+                            $this->EnableAction('Z2MS_ColorRGB');
+                        }
+                        break;
+                    default:
+                        $this->SendDebug('registerVariable', 'Unhandled composite type: ' . $feature['name'], 0);
+                        break;
                 }
                 break;
             default:
