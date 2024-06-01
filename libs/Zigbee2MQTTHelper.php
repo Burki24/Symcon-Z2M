@@ -451,7 +451,7 @@ trait Zigbee2MQTTHelper
         }
     }
 
-    private function registerVariableProfile($expose) // Unverändert
+    private function registerVariableProfile($expose)
     {
         $ProfileName = 'Z2MS.' . $expose['name'];
         $unit = isset($expose['unit']) ? ' ' . $expose['unit'] : '';
@@ -469,7 +469,7 @@ trait Zigbee2MQTTHelper
                         break;
                     default:
                         $this->SendDebug(__FUNCTION__ . ':: Variableprofile missing', $ProfileName, 0);
-                        break;
+                        return $ProfileName;
                 }
                 break;
 
@@ -500,13 +500,17 @@ trait Zigbee2MQTTHelper
 
             case 'numeric':
                 // Auslagern der numeric Logik in eine spezialisierte Funktion
-                return $this->registerNumericProfile($expose);
+                $profile = $this->registerNumericProfile($expose);
+                return $profile['mainProfile'];
 
             default:
                 $this->SendDebug(__FUNCTION__ . ':: Type not handled', $ProfileName, 0);
                 return false;
         }
+
+        return $ProfileName;
     }
+
 
     private function registerNumericProfile($expose, $isFloat = false)
     {
