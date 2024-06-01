@@ -73,9 +73,9 @@ trait Zigbee2MQTTHelper
         $this->symconExtensionCommand('getGroup', $this->ReadPropertyString('MQTTTopic'));
     }
 
-    public function ReceiveData($JSONString) // Neu
-    {
-        if (!empty($this->ReadPropertyString('MQTTTopic'))) {
+    public function ReceiveData($JSONString) {
+        if (!empty($this->ReadPropertyString('MQTTTopic')))
+        {
             $Buffer = json_decode($JSONString, true);
 
             if (IPS_GetKernelDate() > 1670886000) {
@@ -341,9 +341,6 @@ trait Zigbee2MQTTHelper
 
     protected function createVariableProfiles() // Unverändert
     {
-        if (!IPS_VariableProfileExists('Z2M.RadarSensitivity')) {
-            $this->RegisterProfileInteger('Z2M.RadarSensitivity', 'Intensity', '', '', 0, 10, 1);
-        }
         if (!IPS_VariableProfileExists('Z2M.DeviceStatus')) {
             $this->RegisterProfileBooleanEx('Z2M.DeviceStatus', 'Network', '', '', [
                 [false, 'Offline',  '', 0xFF0000],
@@ -453,13 +450,6 @@ trait Zigbee2MQTTHelper
                 break;
         }
     }
-
-    // Folgende Funktionen entfallen durch das neue RequestAction:
-    // private function OnOff(bool $Value)
-    // private function ValveState(bool $Value)
-    // private function LockUnlock(bool $Value)
-    // private function OpenClose(bool $Value)
-    // private function AutoManual(bool $Value)
 
     private function registerVariableProfile($expose) // Unverändert
     {
@@ -650,7 +640,7 @@ trait Zigbee2MQTTHelper
                 break;
             case 'enum':
                 $profileName = $this->registerVariableProfile($feature);
-                $this->RegisterVariableString($ident, $this->Translate($label), $profileName);
+                $this->RegisterVariableString($ident, $this->Translate($label), $profileName['mainProfile']);
                 if ($feature['access'] >= 3) {
                     $this->EnableAction($ident);
                 }
