@@ -58,6 +58,7 @@ trait Zigbee2MQTTHelper
         $this->SendDebug(__FUNCTION__, "Payload: ". json_encode($payload), 0);
         // Erstellung des passenden Payloads und versand durch Z2MSet
         $payloadJSON = json_encode($payload, JSON_UNESCAPED_SLASHES);
+        $this->SendDebug(__FUNCTION__, "PayloadJSON: ". $payloadJSON, 0);
         $this->Z2MSet($payloadJSON);
     }
 
