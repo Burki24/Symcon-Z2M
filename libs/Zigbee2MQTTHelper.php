@@ -11,7 +11,7 @@ trait Zigbee2MQTTHelper
         // Hier werden die Fälle behandelt, wo standard-Aktionen nicht funktionieren.
         // boolean zu string, wenn ausser true und false andere Werte gesendet werden.
         // numeric werden speziell formatiert, wenn ein spezielles Format gewünscht wird.
-        // 'Z2MS_child_lock'                         => ['type' => 'lockunlock', 'dataType' =>'string'],
+        'Z2MS_child_lock'                         => ['type' => 'lockunlock', 'dataType' =>'string'],
         'Z2MS_state_window'                       => ['type' => 'openclose', 'dataType' =>'string'],
         'Z2MS_autolock'                          => ['type' => 'automode', 'dataType' => 'string'],
         'Z2MS_valve_state'                        => ['type' => 'valve', 'dataType' => 'string'],
@@ -57,7 +57,7 @@ trait Zigbee2MQTTHelper
         $variableType = $variableInfo['VariableType'];
 
         // Wandelt den Ident zum passenden Expose um
-        $payloadKey = $this->convertIdentToPayloadKey($ident);
+        $payloadKey = str_replace('Z2MS_', '', $ident);
 
         // konvertiert den Wert in ein für Z2MSet nutzbaren Wert
         // Keine Unterscheidung mehr in strval($value), $value (numerisch), etc. mehr notwendig
