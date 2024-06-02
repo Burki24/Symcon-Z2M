@@ -1,5 +1,5 @@
 {
-    "id": "{4461D30E-9129-4208-B336-8C608CD838DD}",
+    "id": "{33949717-8BBC-2361-81E3-1500F76F04EA}",
     "caption": "Color with Transition",
     "form": [
         {
@@ -16,7 +16,7 @@
     ],
     "priority": 1,
     "action": [
-        "Z2M_setColorExt($_IPS['TARGET'], $_IPS['Color'], 'cie', ['transition' => $_IPS['TransitionTime'], 'state' => 'ON'], 'color');"
+        "Z2MS_setColorExt($_IPS['TARGET'], $_IPS['Color'], 'cie', ['transition' => $_IPS['TransitionTime'], 'state' => 'ON'], 'color');"
     ],
     "restrictions": {
         "objectType": [
@@ -27,7 +27,7 @@
             "TestCommands"
         ],
         "hasIdent": [
-            "Z2M_Color"
+            "Z2MS_color"
         ]
     },
     "locale": {
