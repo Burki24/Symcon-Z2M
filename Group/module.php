@@ -6,12 +6,12 @@ require_once __DIR__ . '/../libs/MQTTHelper.php';
 require_once __DIR__ . '/../libs/VariableProfileHelper.php';
 require_once __DIR__ . '/../libs/Zigbee2MQTTHelper.php';
 
-class Zigbee2MQTTGroup extends IPSModule
+class Z2MGroup extends IPSModule
 {
-    use \Zigbee2MQTT\ColorHelper;
-    use \Zigbee2MQTT\MQTTHelper;
-    use \Zigbee2MQTT\VariableProfileHelper;
-    use \Zigbee2MQTT\Zigbee2MQTTHelper;
+    use \Z2MS\ColorHelper;
+    use \Z2MS\MQTTHelper;
+    use \Z2MS\VariableProfileHelper;
+    use \Z2MS\Zigbee2MQTTHelper;
 
     public function Create()
     {

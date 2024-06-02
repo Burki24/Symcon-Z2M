@@ -21,7 +21,8 @@
             "Supported": "Unterstützt",
             "Type": "Typ",
             "Unknown": "Unbekannt",
-            "Vendor": "Hersteller"
+            "Vendor": "Hersteller",
+            "Your topic in configuration.yaml": "Ihr Topic aus der zigbee2MQTT: configuration.yaml"
         }
     }
 }

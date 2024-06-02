@@ -1,5 +1,9 @@
 {
-    "elements": [],
-    "actions": [],
-    "status": []
+    "elements": [
+        {
+            "type": "ValidationTextBox",
+            "name": "MQTTTopic",
+            "caption": "MQTT Topic"
+        }
+    ]
 }
