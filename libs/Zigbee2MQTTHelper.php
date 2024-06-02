@@ -13,6 +13,20 @@ trait Zigbee2MQTTHelper
         'Z2MS_valve_state' => ['type' => 'valve', 'dataType' => 'string'],
     ];
 
+    private $excludedDebugIdents = [
+        'Z2MS_ieeeAddr',
+        'Z2MS_type',
+        'Z2MS_networkAddress',
+        'Z2MS_model',
+        'Z2MS_vendor',
+        'Z2MS_description',
+        'Z2MS_friendly_name',
+        'Z2MS_manufacturerName',
+        'Z2MS_powerSource',
+        'Z2MS_modelID',
+        'Z2MS_exposes'
+    ];
+
     public function RequestAction($ident, $value)
     {
         switch ($ident) {
@@ -83,7 +97,9 @@ trait Zigbee2MQTTHelper
                         $this->SetValue($ident, $value);
                     }
                 } else {
-                    $this->SendDebug(__FUNCTION__, "Ident $ident nicht gefunden", 0);
+                    if (!in_array($ident, $this->excludedDebugIdents)) {
+                        $this->SendDebug(__FUNCTION__, "Ident $ident nicht gefunden", 0);
+                    }
                 }
             }
         }
@@ -188,7 +204,9 @@ trait Zigbee2MQTTHelper
             $this->SendDebug('Info :: SetValue for ' . $ident, 'Value: ' . $value, 0);
             parent::SetValue($ident, $value);
         } else {
-            $this->SendDebug('Error :: No Expose for Value', 'Ident: ' . $ident, 0);
+            if (!in_array($ident, $this->excludedDebugIdents)) {
+                $this->SendDebug('Error :: No Expose for Value', 'Ident: ' . $ident, 0);
+            }
         }
     }
 
@@ -437,19 +455,15 @@ trait Zigbee2MQTTHelper
                 break;
         }
     }
-    private function convertStateBasedOnMapping($key, $value, $variableType) // Neu
+
+    private function convertStateBasedOnMapping($key, $value, $variableType)
     {
-        // Gehört zu RequestAction
-        // Überprüfe zuerst das spezielle Mapping für den Schlüssel
         if (array_key_exists($key, $this->stateTypeMapping)) {
             $mapping = $this->stateTypeMapping[$key];
-            $dataType = $mapping['dataType'] ?? 'string'; // Standard auf 'string', falls nicht definiert
-            // Spezielle Konvertierung basierend auf dem Typ im Mapping
+            $dataType = $mapping['dataType'] ?? 'string';
             if (isset($mapping['type'])) {
                 return $this->convertState($value, $mapping['type']);
             }
-            // Formatierung des Wertes basierend auf dem definierten Datentyp
-            // Verhindert "cannot autoconvert"-Fehler
             switch ($dataType) {
                 case 'string':
                     return strval($value);
@@ -457,38 +471,29 @@ trait Zigbee2MQTTHelper
                     $format = $mapping['format'] ?? '%f';
                     return sprintf($format, $value);
                 case 'numeric':
-                    return $value; // Keine Umwandlung notwendig
+                    return $value;
                 default:
-                    return strval($value); // Standardfall: Konvertiere zu String
+                    return strval($value);
             }
         }
-        // Direkte Behandlung für boolesche Werte, wenn kein spezielles Mapping vorhanden ist
-        // Setzt true/false auf "ON"/"OFF"
-        if ($variableType === 0) { // Boolean
+        if ($variableType === 0) {
             return $value ? 'ON' : 'OFF';
         }
-        // Standardbehandlung für Werte ohne spezifisches Mapping
         return is_numeric($value) ? $value : strval($value);
     }
-    private function convertState($value, $type) // Neu
+
+    private function convertState($value, $type)
     {
-        // Gehört zu RequestAction
-        // Erweiterte Zustandsmappings
-        // Setzt ankommende Werte auf true/false zur Nutzung als boolean in Symcon
         $stateMappings = [
-            'onoff'      => ['ON', 'OFF'],
-            'openclose'  => ['OPEN', 'CLOSE'],
+            'onoff' => ['ON', 'OFF'],
+            'openclose' => ['OPEN', 'CLOSE'],
             'lockunlock' => ['LOCK', 'UNLOCK'],
             'automanual' => ['AUTO', 'MANUAL'],
-            'valve'      => ['OPEN', 'CLOSED'],
+            'valve' => ['OPEN', 'CLOSED'],
         ];
-        // Prüfe, ob der Zustandstyp in den Mappings vorhanden ist
         if (array_key_exists($type, $stateMappings)) {
-            // Wähle den korrekten Wert basierend auf dem booleschen $value
             return $value ? $stateMappings[$type][0] : $stateMappings[$type][1];
-        } else {
-            // Fallback für nicht definierte Zustandstypen
-            return $value ? 'true' : 'false';
         }
+        return $value ? 'true' : 'false';
     }
 }
